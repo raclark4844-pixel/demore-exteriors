@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demore Exteriors | Roofing & Siding | Cleveland, OH</title>
+    <meta name="description" content="Demore Exteriors - Expert residential and commercial roofing, siding, storm damage restoration in Cleveland, Ohio. Free inspections & quotes. Call 216-215-8793">
+    <style>
+        :root {
+            --primary-red: #c8102e;
+            --dark-bg: #0f0f0f;
+            --gray: #a9a9a9;
+            --light-gray: #e0e0e0;
+            --accent-orange: #ff8c00;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Arial', sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            background: #fff; 
+        }
+        header {
+            background: var(--dark-bg) url('https://reviveroofingllc.com/wp-content/uploads/2025/04/hero-background-1.jpg') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.55);
+        }
+        header > * { position: relative; z-index: 1; }
+        .logo-container img {
+            max-width: 400px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        h1 { font-size: 3.2rem; margin-bottom: 10px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+        .tagline { font-size: 1.5rem; margin-bottom: 30px; }
+        .cta-btn {
+            display: inline-block;
+            background: var(--primary-red);
+            color: white;
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .cta-btn:hover { background: #a00d24; }
+
+        section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
+        h2 { text-align: center; margin-bottom: 40px; color: var(--primary-red); font-size: 2.8rem; }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .service-card {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .service-card:hover { transform: translateY(-10px); }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .gallery-item p { text-align: center; margin-top: 10px; font-weight: bold; }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .testimonial {
+            background: #f0f0f0;
+            padding: 25px;
+            border-radius: 10px;
+            font-style: italic;
+            position: relative;
+        }
+        .testimonial::before {
+            content: '“';
+            font-size: 5rem;
+            color: var(--primary-red);
+            position: absolute;
+            top: -20px; left: 20px;
+            opacity: 0.2;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: grid;
+            gap: 15px;
+        }
+        input, textarea {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover { background: #a00d24; }
+
+        .call-now {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-orange);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            text-decoration: none;
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+        .call-now:hover { transform: scale(1.1); }
+
+        footer {
+            background: var(--dark-bg);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            header { padding: 80px 15px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Replace src with your actual logo image URL/path once uploaded -->
+        <div class="logo-container">
+            <img src="YOUR_LOGO_HERE.png" alt="Demore Exteriors Logo">
+        </div>
+        <h1>Demore Exteriors</h1>
+        <p class="tagline">Roofing & Siding | Exterior Solutions | Cleveland, Ohio</p>
+        <a href="tel:2162158793" class="cta-btn">Call Now: 216-215-8793</a>
+        <a href="#contact" class="cta-btn">Get Free Quote</a>
+    </header>
+
+    <section id="services">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card"><h3>Residential Roof Installation</h3><p>Quality new roofs built to last Ohio winters.</p></div>
+            <div class="service-card"><h3>Roof Repairs & Leak Fixes</h3><p>Fast, reliable fixes to stop leaks and damage.</p></div>
+            <div class="service-card"><h3>Storm Damage Restoration</h3><p>Insurance claims help & full restoration after storms.</p></div>
+            <div class="service-card"><h3>Asphalt Shingle Replacement</h3><p>Durable, affordable shingle upgrades.</p></div>
+            <div class="service-card"><h3>Metal Roofing</h3><p>Long-lasting, energy-efficient metal options.</p></div>
+            <div class="service-card"><h3>Commercial Roofing</h3><p>Flat, low-slope & large-scale commercial solutions.</p></div>
+            <div class="service-card"><h3>Roof Inspections</h3><p>Free or detailed inspections for peace of mind.</p></div>
+            <div class="service-card"><h3>Gutter Installation/Cleaning</h3><p>Protect your home with proper gutter systems.</p></div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <h2>Before & After Projects</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://cobexcg.com/wp-content/uploads/2025/06/contentcreationteamkova_Before_and_after_comparison_of_an_aspha_4041b6af-c4a8-4c57-b69e-994bff698f83.webp" alt="Before and After Roof Replacement">
+                <p>Storm-Damaged Roof → Fully Restored</p>
+            </div>
+            <div class="gallery-item">
+                <img src="https://www.elevatedroofinc.com/wp-content/uploads/storm-damage-repair-and-claims.jpg.webp" alt="Storm Damage Repair">
+                <p>Wind/Hail Damage → Like New</p>
+            </div>
+            <div class="gallery-item">
+                <img src="https://www.pac-clad.com/wordpress2021/wp-content/uploads/2021/02/pix-Home-Casey-residence_Page_09-1-991x740.jpg" alt="Metal Roofing Installation">
+                <p>New Metal Roof Upgrade</p>
+            </div>
+            <!-- Add more when you have your photos -->
+        </div>
+    </section>
+
+    <section id="testimonials">
+        <h2>What Our Customers Say</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial">
+                <p>Demore Exteriors handled our hail damage claim perfectly — professional, fast, and the new roof looks amazing!</p>
+                <p><strong>— Sarah M., Parma OH</strong></p>
+            </div>
+            <div class="testimonial">
+                <p>Best decision we made was calling Demore for our roof replacement. Honest, on-time, and great cleanup.</p>
+                <p><strong>— Mike T., Cleveland OH</strong></p>
+            </div>
+            <div class="testimonial">
+                <p>Metal roof installed last year — zero issues through winter. Highly recommend!</p>
+                <p><strong>— Lisa R., Lakewood OH</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us for a Free Quote</h2>
+        <!-- Replace YOUR_EMAIL_HERE with your Formspree endpoint (sign up free at formspree.io) -->
+        <form action="https://formspree.io/f/YOUR_EMAIL_HERE" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <textarea name="message" rows="5" placeholder="Tell us about your project..." required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <a href="tel:2162158793" class="call-now">📞</a>
+
+    <footer>
+        <p>&copy; 2026 Demore Exteriors | Roofing & Siding | Serving Cleveland & Northeast Ohio</p>
+        <p>216-215-8793 | Licensed & Insured</p>
+    </footer>
+
+</body>
+</html>
