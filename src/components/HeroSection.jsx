@@ -52,8 +52,8 @@ export default function HeroSection() {
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm sm:text-base font-heading font-bold">Storm damage? Call now — answered 24/7.</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Virtual receptionist can collect storm details and start your inspection request after hours.</p>
+                <p className="text-sm sm:text-base font-heading font-bold">Storm damage? Call now.</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">We can collect storm details and start your inspection request.</p>
               </div>
             </div>
             <a href="tel:+14409206133" className="shrink-0 font-heading font-bold text-sm text-primary hover:underline">(440) 920-6133</a>
