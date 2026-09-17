@@ -6,10 +6,10 @@ const SHEET_NAME = "Leads";
 const DEFAULT_RECIPIENTS = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
 
 const esc = (value) => String(value ?? "")
-  .replaceAll("&", "&")
-  .replaceAll("<", "<")
-  .replaceAll(">", ">")
-  .replaceAll('"', """)
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
   .replaceAll("'", "&#039;");
 
 const show = (value, fallback = "Not provided") => value ? esc(value) : fallback;
