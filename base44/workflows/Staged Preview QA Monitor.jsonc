@@ -1,0 +1,45 @@
+{
+  "name": "Staged Preview QA Monitor",
+  "description": "Checks open staging PRs for successful Vercel preview status and runs bounded code/diff QA. Never merges or publishes production.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/10 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "staged_preview_qa_monitor",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "monitor_stages": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "monitorStagedWebsiteChanges",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Monitor Vercel staging previews",
+            "description": "Wait for Vercel success, inspect the PR diff, run QA, and stop at the separate owner production gate"
+          }
+        }
+      }
+    ]
+  }
+}
