@@ -6,10 +6,10 @@ const SHEET_NAME = "Leads";
 const DEFAULT_RECIPIENTS = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
 
 const esc = (value) => String(value ?? "")
-  .replaceAll("&", "&amp;")
-  .replaceAll("<", "&lt;")
-  .replaceAll(">", "&gt;")
-  .replaceAll('"', "&quot;")
+  .replaceAll("&", "&")
+  .replaceAll("<", "<")
+  .replaceAll(">", ">")
+  .replaceAll('"', """)
   .replaceAll("'", "&#039;");
 
 const show = (value, fallback = "Not provided") => value ? esc(value) : fallback;
@@ -30,6 +30,7 @@ Deno.serve(async (req) => {
         lead.email || "",
         lead.address || "",
         lead.service_type || "",
+        lead.active_leak ? "YES" : "No",
         lead.insurance_claim_filed || "",
         lead.claim_carrier || "",
         lead.claim_number || "",
@@ -77,6 +78,7 @@ Deno.serve(async (req) => {
           <tr><td style="padding:6px;font-weight:bold">Email</td><td style="padding:6px">${show(lead.email)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Property address</td><td style="padding:6px">${show(lead.address)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Service</td><td style="padding:6px">${show(lead.service_type, "Not specified")}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Active leak</td><td style="padding:6px">${lead.active_leak ? "YES — PRIORITY" : "No"}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Claim filed?</td><td style="padding:6px">${show(lead.insurance_claim_filed, "Not specified")}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Carrier</td><td style="padding:6px">${show(lead.claim_carrier)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Claim number</td><td style="padding:6px">${show(lead.claim_number)}</td></tr>
