@@ -46,6 +46,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import AIControl from './pages/AIControl';
 // Add page imports here
+// DES-2026-000021: staging-only source comment; no runtime effect
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
