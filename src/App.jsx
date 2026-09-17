@@ -129,6 +129,7 @@ const AuthenticatedApp = () => {
 
 
 function App() {
+  // DES-2026-000023: staging-only no-op comment; no runtime behavior change.
 
   return (
     <AuthProvider>
