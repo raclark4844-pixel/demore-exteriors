@@ -76,7 +76,7 @@ export default function ContactSection({ mode = "estimate" }) {
                 </p>
                 {inspectionMode && (
                   <a href="tel:+14409206133" className="inline-flex items-center justify-center gap-2 mt-5 text-primary font-heading font-bold hover:underline">
-                    <Phone className="w-4 h-4" /> Need us sooner? Call (440) 920-6133 — answered 24/7
+                    <Phone className="w-4 h-4" /> Need us sooner? Call (440) 920-6133
                   </a>
                 )}
               </div>
@@ -170,7 +170,7 @@ export default function ContactSection({ mode = "estimate" }) {
                   <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0"><Phone className="w-4 h-4 text-primary" /></div>
                   <div>
                     <p className="text-sm font-medium group-hover:text-primary transition-colors">(440) 920-6133</p>
-                    <p className="text-xs text-muted-foreground">Call line answered 24/7 · office hours Mon–Sat, 7AM–7PM</p>
+                    <p className="text-xs text-muted-foreground">Office hours Mon–Sat, 7AM–7PM</p>
                   </div>
                 </a>
 
@@ -206,7 +206,7 @@ export default function ContactSection({ mode = "estimate" }) {
 
             <div className="bg-card border border-primary/20 rounded-2xl p-6 text-center">
               <p className="text-sm font-heading font-semibold text-primary mb-1">Emergency Storm Damage?</p>
-              <p className="text-xs text-muted-foreground mb-3">Call now for 24/7 intake and priority inspection routing</p>
+              <p className="text-xs text-muted-foreground mb-3">Call now for storm intake and priority inspection routing</p>
               <a href="tel:4409206133"><Button className="bg-primary hover:bg-primary/90 font-heading font-bold w-full"><Phone className="w-4 h-4 mr-2" />(440) 920-6133</Button></a>
               <Link to="/storm-damage" className="inline-block mt-3 text-xs text-primary hover:underline">Storm damage help →</Link>
             </div>
