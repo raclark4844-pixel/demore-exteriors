@@ -1,0 +1,58 @@
+{
+  "name": "ContactLead",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Full name of the person requesting an estimate"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "address": {
+      "type": "string",
+      "description": "Property address"
+    },
+    "service_type": {
+      "type": "string",
+      "enum": [
+        "roofing",
+        "siding",
+        "gutters",
+        "storm_damage",
+        "multiple",
+        "other"
+      ],
+      "description": "Type of service requested"
+    },
+    "message": {
+      "type": "string",
+      "description": "Additional details or message"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional description (up to 1000 characters)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "scheduled",
+        "completed"
+      ],
+      "default": "new",
+      "description": "Lead status"
+    }
+  },
+  "required": [
+    "name",
+    "phone"
+  ]
+}

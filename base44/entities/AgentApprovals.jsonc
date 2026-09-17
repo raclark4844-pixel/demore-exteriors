@@ -1,0 +1,113 @@
+{
+  "name": "AgentApprovals",
+  "type": "object",
+  "properties": {
+    "approvalId": {
+      "type": "string",
+      "description": "Human-readable approval reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job the approval belongs to"
+    },
+    "requestedBy": {
+      "type": "string",
+      "description": "Agent or human requesting the approval"
+    },
+    "approvalType": {
+      "type": "string",
+      "enum": [
+        "SEO",
+        "WEB",
+        "CONTENT",
+        "REPUTATION",
+        "STORM",
+        "OWNER"
+      ],
+      "description": "Type of approval required"
+    },
+    "approver": {
+      "type": "string",
+      "description": "Agent or human responsible for approving (PENDING until decided)"
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "RED"
+      ],
+      "default": "LOW",
+      "description": "Risk level of the action being approved"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Summary of what is being approved"
+    },
+    "proposedAction": {
+      "type": "string",
+      "description": "The action proposed for approval"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "CANCELLED"
+      ],
+      "default": "PENDING",
+      "description": "Approval status"
+    },
+    "comments": {
+      "type": "string",
+      "description": "Approver comments"
+    },
+    "approvedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the approval decision was made"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE for test workflow records"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE = archived; excluded from default dashboard views and KPIs, retained permanently in audit history"
+    }
+  },
+  "required": [
+    "changeId",
+    "approvalType"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

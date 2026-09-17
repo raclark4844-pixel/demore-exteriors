@@ -1,0 +1,175 @@
+{
+  "name": "AgentJobs",
+  "type": "object",
+  "properties": {
+    "jobId": {
+      "type": "string",
+      "description": "Human-readable job reference, e.g. DES-2026-000001-J1"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all child records of a workflow (DES-YYYY-######)"
+    },
+    "parentJobId": {
+      "type": "string",
+      "description": "Job this one was derived from, if any"
+    },
+    "createdBy": {
+      "type": "string",
+      "description": "Agent or human that created the job"
+    },
+    "assignedAgent": {
+      "type": "string",
+      "description": "agentId of the agent assigned to this job"
+    },
+    "jobType": {
+      "type": "string",
+      "description": "Type of work, e.g. SEO, GEO, CRO, Website Development"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "NORMAL",
+        "HIGH",
+        "URGENT"
+      ],
+      "default": "NORMAL",
+      "description": "Job priority"
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "RED"
+      ],
+      "default": "LOW",
+      "description": "Risk level of the job; RED requires owner approval"
+    },
+    "objective": {
+      "type": "string",
+      "description": "What this job is meant to accomplish"
+    },
+    "context": {
+      "type": "string",
+      "description": "Background context for the assigned agent"
+    },
+    "inputData": {
+      "type": "object",
+      "description": "Structured input payload for the job"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "NEW",
+        "ROUTING",
+        "ASSIGNED",
+        "IN_PROGRESS",
+        "AWAITING_SPECIALIST",
+        "AWAITING_OWNER",
+        "APPROVED",
+        "REJECTED",
+        "READY_TO_IMPLEMENT",
+        "IMPLEMENTING",
+        "VALIDATING",
+        "COMPLETED",
+        "BLOCKED",
+        "ARCHIVED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "default": "NEW",
+      "description": "Lifecycle status of the job; BLOCKED = AI provider unavailable"
+    },
+    "requiresOwnerApproval": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether owner approval is required before implementation"
+    },
+    "ownerApprovalStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "NOT_REQUIRED"
+      ],
+      "default": "NOT_REQUIRED",
+      "description": "Owner approval state"
+    },
+    "specialistApprovalStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "NOT_REQUIRED"
+      ],
+      "default": "PENDING",
+      "description": "Specialist approval state"
+    },
+    "implementationStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_REQUIRED",
+        "PENDING",
+        "IN_PROGRESS",
+        "DONE",
+        "FAILED"
+      ],
+      "default": "NOT_REQUIRED",
+      "description": "Implementation status"
+    },
+    "validationStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_REQUIRED",
+        "PENDING",
+        "IN_PROGRESS",
+        "PASSED",
+        "FAILED"
+      ],
+      "default": "NOT_REQUIRED",
+      "description": "Validation status"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE for test workflow records"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE = archived; excluded from default dashboard views and KPIs, retained permanently in audit history"
+    }
+  },
+  "required": [
+    "changeId",
+    "objective",
+    "jobType"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "SupplyHouse",
+  "type": "object",
+  "properties": {
+    "supply_house": {
+      "type": "string",
+      "description": "Supply house name"
+    },
+    "branch_market": {
+      "type": "string",
+      "description": "Branch/Market location"
+    },
+    "county": {
+      "type": "string",
+      "description": "County"
+    },
+    "address": {
+      "type": "string",
+      "description": "Address/Location"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "product_categories": {
+      "type": "string",
+      "description": "Product categories"
+    },
+    "manufacturers_lines": {
+      "type": "string",
+      "description": "Manufacturers / Lines to Verify"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Source URL"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional description (up to 1000 characters)"
+    }
+  },
+  "required": [
+    "supply_house"
+  ]
+}

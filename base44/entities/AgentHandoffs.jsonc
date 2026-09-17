@@ -1,0 +1,130 @@
+{
+  "name": "AgentHandoffs",
+  "type": "object",
+  "properties": {
+    "handoffId": {
+      "type": "string",
+      "description": "Human-readable handoff reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job the handoff belongs to"
+    },
+    "fromAgent": {
+      "type": "string",
+      "description": "agentId of the sending agent"
+    },
+    "toAgent": {
+      "type": "string",
+      "description": "agentId of the receiving agent"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the handoff is happening"
+    },
+    "request": {
+      "type": "string",
+      "description": "What is being requested of the receiving agent"
+    },
+    "context": {
+      "type": "string",
+      "description": "Context passed with the handoff"
+    },
+    "recommendation": {
+      "type": "string",
+      "description": "Recommendation included with the handoff"
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "RED"
+      ],
+      "default": "LOW",
+      "description": "Risk level of the requested action"
+    },
+    "protectedItems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Items the receiving agent must not touch"
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Criteria for accepting the handoff work"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "ACCEPTED",
+        "REJECTED",
+        "EXPIRED",
+        "SUPERSEDED"
+      ],
+      "default": "PENDING",
+      "description": "Handoff status"
+    },
+    "response": {
+      "type": "string",
+      "description": "Receiving agent's response"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "ACCEPTED",
+        "REJECTED"
+      ],
+      "default": "PENDING",
+      "description": "Receiving agent's decision"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE for test workflow records"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE = archived; excluded from default dashboard views and KPIs, retained permanently in audit history"
+    }
+  },
+  "required": [
+    "changeId",
+    "fromAgent",
+    "toAgent"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

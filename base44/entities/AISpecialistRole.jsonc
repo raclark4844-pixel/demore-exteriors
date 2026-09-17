@@ -1,0 +1,125 @@
+{
+  "name": "AISpecialistRole",
+  "type": "object",
+  "properties": {
+    "roleId": {
+      "type": "string",
+      "description": "Stable role key, e.g. SEO_SPECIALIST, ORCHESTRATOR"
+    },
+    "roleTitle": {
+      "type": "string",
+      "description": "Display title of the role"
+    },
+    "agentId": {
+      "type": "string",
+      "description": "AgentRegistry agent that owns this role (identity used in handoffs, results, approvals)"
+    },
+    "provider": {
+      "type": "string",
+      "description": "AI provider this role runs on (OPENAI, XAI, ANTHROPIC, BASE44)"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model this role uses"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this role accepts work"
+    },
+    "fallbackProvider": {
+      "type": "string",
+      "description": "Provider used if the primary provider fails"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What this role can do"
+    },
+    "allowedActions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Actions this role may take"
+    },
+    "forbiddenActions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Actions this role must never take"
+    },
+    "riskCeiling": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "default": "HIGH",
+      "description": "Maximum risk level this role may act on without escalation"
+    },
+    "requiredReviewers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Role(s) that must review this role's work"
+    },
+    "systemPrompt": {
+      "type": "string",
+      "description": "Server-side system prompt/instructions for this role"
+    },
+    "lastActivityAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this role performed a request"
+    },
+    "successCount": {
+      "type": "number",
+      "default": 0,
+      "description": "Successful requests count"
+    },
+    "errorCount": {
+      "type": "number",
+      "default": 0,
+      "description": "Failed requests count"
+    },
+    "totalResponseMs": {
+      "type": "number",
+      "default": 0,
+      "description": "Sum of successful response times (ms), for average calculation"
+    }
+  },
+  "required": [
+    "roleId",
+    "roleTitle",
+    "provider",
+    "model"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

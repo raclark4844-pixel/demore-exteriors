@@ -1,0 +1,71 @@
+{
+  "name": "AgentAuditLog",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Human-readable event reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job the event relates to"
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Agent that performed the action"
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "JOB_CREATED",
+        "STATUS_CHANGE",
+        "HANDOFF",
+        "APPROVAL",
+        "REJECTION",
+        "IMPLEMENTATION",
+        "VALIDATION",
+        "CONFLICT",
+        "LOCK"
+      ],
+      "description": "Type of audited event"
+    },
+    "action": {
+      "type": "string",
+      "description": "What was done"
+    },
+    "previousState": {
+      "type": "string",
+      "description": "State before the action"
+    },
+    "newState": {
+      "type": "string",
+      "description": "State after the action"
+    },
+    "details": {
+      "type": "string",
+      "description": "Additional event details"
+    }
+  },
+  "required": [
+    "changeId",
+    "eventType"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": false,
+    "delete": false
+  }
+}

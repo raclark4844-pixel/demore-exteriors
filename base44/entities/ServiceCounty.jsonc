@@ -1,0 +1,36 @@
+{
+  "name": "ServiceCounty",
+  "type": "object",
+  "properties": {
+    "county": {
+      "type": "string",
+      "description": "County name"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "Primary",
+        "Target/nearby",
+        "Expansion/nearby"
+      ],
+      "description": "Priority level"
+    },
+    "important_cities": {
+      "type": "string",
+      "description": "Important cities/communities in the county"
+    },
+    "source_note": {
+      "type": "string",
+      "description": "Source or note"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional description (up to 1000 characters)"
+    }
+  },
+  "required": [
+    "county",
+    "priority"
+  ]
+}

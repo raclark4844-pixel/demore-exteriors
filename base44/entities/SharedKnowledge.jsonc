@@ -1,0 +1,92 @@
+{
+  "name": "SharedKnowledge",
+  "type": "object",
+  "properties": {
+    "knowledgeId": {
+      "type": "string",
+      "description": "Human-readable knowledge reference"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "BUSINESS_FACT",
+        "SERVICE",
+        "SERVICE_AREA",
+        "CERTIFICATION",
+        "WARRANTY",
+        "CONTACT",
+        "SEO_RULE",
+        "CONTENT_RULE",
+        "BRAND_RULE",
+        "STORM_RULE",
+        "WORKFLOW_RULE",
+        "TECHNICAL_RULE"
+      ],
+      "description": "Knowledge category"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Short subject line"
+    },
+    "content": {
+      "type": "string",
+      "description": "The knowledge itself"
+    },
+    "source": {
+      "type": "string",
+      "description": "Where this knowledge came from"
+    },
+    "verificationStatus": {
+      "type": "string",
+      "enum": [
+        "UNVERIFIED",
+        "VERIFIED",
+        "DISPUTED",
+        "RETIRED"
+      ],
+      "default": "UNVERIFIED",
+      "description": "Verification state; agents may never mark a fact VERIFIED themselves"
+    },
+    "verifiedBy": {
+      "type": "string",
+      "description": "Human who verified the fact (owner/staff)"
+    },
+    "validFrom": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the knowledge becomes valid"
+    },
+    "validUntil": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the knowledge expires"
+    }
+  },
+  "required": [
+    "category",
+    "subject",
+    "content"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

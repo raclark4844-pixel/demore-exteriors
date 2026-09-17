@@ -1,0 +1,97 @@
+{
+  "name": "AIProviderRegistry",
+  "type": "object",
+  "properties": {
+    "providerId": {
+      "type": "string",
+      "description": "Stable provider key: OPENAI, XAI, ANTHROPIC, BASE44, or future providers"
+    },
+    "providerName": {
+      "type": "string",
+      "description": "Display name of the provider"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "default": "ACTIVE",
+      "description": "Whether this provider may be used at all"
+    },
+    "baseUrl": {
+      "type": "string",
+      "description": "API endpoint base URL (server-side only)"
+    },
+    "defaultModel": {
+      "type": "string",
+      "description": "Default model for this provider"
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Models available from this provider"
+    },
+    "authStatus": {
+      "type": "string",
+      "enum": [
+        "CONNECTED",
+        "MISSING_KEY",
+        "ERROR"
+      ],
+      "default": "MISSING_KEY",
+      "description": "Server-side authentication status; keys never leave the server"
+    },
+    "fallbackProvider": {
+      "type": "string",
+      "description": "Provider to fall back to when this provider is configured but unavailable"
+    },
+    "lastSuccessAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful request"
+    },
+    "lastError": {
+      "type": "string",
+      "description": "Most recent error"
+    },
+    "lastErrorAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the most recent error occurred"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Operational notes"
+    }
+  },
+  "required": [
+    "providerId",
+    "providerName",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

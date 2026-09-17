@@ -1,0 +1,23 @@
+{
+  "name": "DailyFunFact",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "description": "The date in YYYY-MM-DD format"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the historical event"
+    },
+    "content": {
+      "type": "string",
+      "description": "AI-generated Markdown detailing the funny historical event"
+    }
+  },
+  "required": [
+    "date",
+    "title",
+    "content"
+  ]
+}

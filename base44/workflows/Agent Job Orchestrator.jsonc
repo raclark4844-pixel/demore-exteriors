@@ -1,0 +1,40 @@
+{
+  "description": "When a new request is created in AI Control, the MASTER_ORCHESTRATOR classifies it, assigns the shared Change ID, routes it to a specialist AI, gets a bot review, and runs the approval gate. HIGH/RED risk always stops for owner approval.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "AgentJobs"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "agent_job_orchestrator",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "orchestrate_request": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "orchestrateAgentJob",
+            "args": {
+              "job_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Orchestrate request",
+            "description": "Classify, route, process, review, gate"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Agent Job Orchestrator"
+}

@@ -1,0 +1,44 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "author_name": {
+      "type": "string",
+      "description": "Name of the person who wrote the review"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Star rating from 0 to 5"
+    },
+    "comment": {
+      "type": "string",
+      "description": "The review text / comment"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional description (up to 1000 characters)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "google",
+        "website"
+      ],
+      "default": "website",
+      "description": "Where the review originated"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the review (YYYY-MM-DD)"
+    }
+  },
+  "required": [
+    "author_name",
+    "rating",
+    "comment"
+  ]
+}

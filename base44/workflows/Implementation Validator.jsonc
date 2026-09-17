@@ -1,0 +1,40 @@
+{
+  "name": "Implementation Validator",
+  "description": "When a queued implementation is marked COMPLETED (human GO confirmed after Base44 implemented), runs automated validation and the specialist post-implementation review \u2014 ending in COMPLETE or ROLLBACK REQUIRED.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "ImplementationQueue",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.data.status == \"COMPLETED\" and .trigger.old_data.status != \"COMPLETED\" }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "implementation_validator",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "validate_implementation": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "validateImplementation",
+            "args": {
+              "implementation_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Validate implementation",
+            "description": "Post-implementation review \u2014 COMPLETE or ROLLBACK"
+          }
+        }
+      }
+    ]
+  }
+}

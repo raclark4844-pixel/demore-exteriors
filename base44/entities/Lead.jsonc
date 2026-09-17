@@ -1,0 +1,119 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "fullName": {
+      "type": "string",
+      "description": "Visitor name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "address": {
+      "type": "string",
+      "description": "Property address"
+    },
+    "city": {
+      "type": "string",
+      "description": "City"
+    },
+    "county": {
+      "type": "string",
+      "description": "County"
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "leak",
+        "project",
+        "insurance",
+        "faq",
+        "out_of_area",
+        "other"
+      ],
+      "description": "What the visitor needs"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "urgent_leak",
+        "adjuster_on_site",
+        "hot_insurance",
+        "standard",
+        "after_hours_faq",
+        "existing_message"
+      ],
+      "default": "standard",
+      "description": "Lead priority"
+    },
+    "serviceType": {
+      "type": "string",
+      "description": "roofing | siding | windows | doors | gutters | decks | commercial | storm damage | other"
+    },
+    "propertyType": {
+      "type": "string",
+      "description": "residential or commercial"
+    },
+    "channelTrail": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Channel trail entries (timestamp + chat/call)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Staff-facing summary of the conversation"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Conversation session identifier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "scheduled",
+        "closed"
+      ],
+      "default": "new",
+      "description": "Lead status"
+    },
+    "lastActivity": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last conversation activity"
+    }
+  },
+  "required": [
+    "sessionId"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

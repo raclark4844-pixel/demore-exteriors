@@ -1,0 +1,112 @@
+{
+  "name": "AgentConflicts",
+  "type": "object",
+  "properties": {
+    "conflictId": {
+      "type": "string",
+      "description": "Human-readable conflict reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job the conflict relates to"
+    },
+    "agentA": {
+      "type": "string",
+      "description": "First agent in the disagreement"
+    },
+    "agentB": {
+      "type": "string",
+      "description": "Second agent in the disagreement"
+    },
+    "issue": {
+      "type": "string",
+      "description": "What the disagreement is about"
+    },
+    "agentAPosition": {
+      "type": "string",
+      "description": "Agent A's position"
+    },
+    "agentBPosition": {
+      "type": "string",
+      "description": "Agent B's position"
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "RED"
+      ],
+      "default": "LOW",
+      "description": "Risk level; RED-risk conflicts require owner resolution"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "OPEN",
+        "ESCALATED_TO_ORCHESTRATOR",
+        "AWAITING_OWNER",
+        "RESOLVED",
+        "CLOSED"
+      ],
+      "default": "OPEN",
+      "description": "Conflict status"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "How the conflict was resolved"
+    },
+    "resolvedBy": {
+      "type": "string",
+      "description": "Who resolved it (Master Orchestrator or owner; never the platform itself)"
+    },
+    "resolvedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the conflict was resolved"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE for test workflow records"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE = archived; excluded from default dashboard views and KPIs, retained permanently in audit history"
+    }
+  },
+  "required": [
+    "changeId",
+    "agentA",
+    "agentB",
+    "issue"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
