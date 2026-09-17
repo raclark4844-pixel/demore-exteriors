@@ -48,7 +48,7 @@ const process = [
 export default function StormDamage() {
   useSEO({
     title: "Storm Damage Roof & Siding Repair | Mentor, OH & Northeast Ohio | Demore",
-    description: "Hail, wind and storm damage inspections for roofs, siding and gutters in Mentor and Northeast Ohio. 24/7 call intake, photo damage check and free inspection. Call (440) 920-6133.",
+    description: "Hail, wind and storm damage inspections for roofs, siding and gutters in Mentor and Northeast Ohio. Phone intake, photo damage check and free inspection. Call (440) 920-6133.",
     keywords: "storm damage contractor Mentor Ohio, hail damage roof Mentor OH, wind damage roof Northeast Ohio, storm damage siding Lake County, hail damage roofing Cuyahoga County, insurance restoration contractor Mentor, emergency roof leak Northeast Ohio, storm damage inspection Ohio, roof hail inspection Mentor 44060",
     canonical: "/storm-damage",
     geoCity: "Mentor, Ohio",
@@ -106,8 +106,8 @@ export default function StormDamage() {
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-6 rounded-2xl border border-accent/40 bg-accent/10 p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <p className="font-heading font-bold text-base sm:text-lg">Storm damage? Call now — answered 24/7.</p>
-              <p className="text-sm text-muted-foreground mt-1">Demore's virtual receptionist can collect your storm details and help start an inspection request after normal business hours.</p>
+              <p className="font-heading font-bold text-base sm:text-lg">Storm damage? Call now.</p>
+              <p className="text-sm text-muted-foreground mt-1">We can collect your storm details and help start an inspection request.</p>
             </div>
             <a href="tel:+14409206133" className="shrink-0">
               <Button className="bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold">
@@ -128,7 +128,7 @@ export default function StormDamage() {
             </motion.p>
             <div className="flex flex-col sm:flex-row gap-3">
               <a href="tel:+14409206133">
-                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold h-14 px-7"><Phone className="w-5 h-5 mr-2" /> Call 24/7</Button>
+                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold h-14 px-7"><Phone className="w-5 h-5 mr-2" /> Call Now</Button>
               </a>
               <button onClick={() => openAssistant("I need help after a storm and want to schedule an inspection") }>
                 <Button size="lg" variant="outline" className="h-14 px-7 font-heading font-bold"><MessageCircle className="w-5 h-5 mr-2" /> Ask Demore</Button>
