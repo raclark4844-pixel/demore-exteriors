@@ -35,6 +35,8 @@
         "CROSS_QUESTION",
         "REVISION",
         "VALIDATION",
+        "STAGING_CODE",
+        "STAGING_QA",
         "OTHER"
       ],
       "description": "Why the request was made"

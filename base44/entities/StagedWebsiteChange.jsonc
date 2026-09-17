@@ -30,6 +30,10 @@
       "type": "string",
       "description": "GitHub staging branch name"
     },
+    "commitSha": {
+      "type": "string",
+      "description": "Commit SHA for the staged branch"
+    },
     "pullRequestNumber": {
       "type": "number"
     },
@@ -38,6 +42,30 @@
     },
     "previewUrl": {
       "type": "string"
+    },
+    "previewStatus": {
+      "type": "string",
+      "description": "Latest Vercel/GitHub deployment status"
+    },
+    "qaVerdict": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "CHANGES_REQUIRED",
+        "BLOCKED"
+      ]
+    },
+    "qaComments": {
+      "type": "string"
+    },
+    "qaReviewedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "productionApprovedAt": {
+      "type": "string",
+      "format": "date-time"
     },
     "status": {
       "type": "string",
