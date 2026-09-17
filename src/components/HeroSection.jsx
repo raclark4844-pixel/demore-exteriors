@@ -1,7 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Phone, ArrowRight, MapPin } from "lucide-react";
+import { Phone, ArrowRight, MapPin, AlertTriangle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HERO_IMG = "https://media.base44.com/images/public/6a22e139a45d8195801a1ea3/32cd86151_generated_image.png";
 
@@ -16,7 +17,6 @@ const trust = [
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden" id="hero">
-      {/* Background */}
       <div className="absolute inset-0">
         <img
           src={HERO_IMG}
@@ -27,7 +27,6 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
       </div>
 
-      {/* Decorative lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           initial={{ scaleX: 0 }}
@@ -45,6 +44,21 @@ export default function HeroSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 w-full">
         <div className="max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-5 rounded-2xl border border-accent/40 bg-background/90 backdrop-blur px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm sm:text-base font-heading font-bold">Storm damage? Call now — answered 24/7.</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Virtual receptionist can collect storm details and start your inspection request after hours.</p>
+              </div>
+            </div>
+            <a href="tel:+14409206133" className="shrink-0 font-heading font-bold text-sm text-primary hover:underline">(440) 920-6133</a>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -107,6 +121,7 @@ export default function HeroSection() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </a>
+            <Link to="/storm-damage" className="sm:self-center text-sm font-heading font-bold text-primary hover:underline">Storm damage help →</Link>
           </motion.div>
 
           <motion.p
