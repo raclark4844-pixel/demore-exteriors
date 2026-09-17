@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useId, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { base44 } from "@/api/base44Client";
@@ -10,6 +10,7 @@ import { CloudUpload, X, Phone, Loader2, ShieldCheck, Sparkles, CalendarCheck } 
 const MAX_PHOTOS = 3;
 
 export default function DamageCheckForm() {
+  const formId = useId();
   const [photos, setPhotos] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -212,39 +213,69 @@ export default function DamageCheckForm() {
           </div>
         ) : (
           <form onSubmit={submitLead} className="space-y-3">
+            <div className="space-y-1.5">
+            <label htmlFor={`${formId}-name`} className="block text-sm font-medium">Full name (required)</label>
             <Input
+              id={`${formId}-name`}
+              name="name"
+              autoComplete="name" required
               placeholder="Full name *"
               value={lead.name}
               onChange={(e) => setLead({ ...lead, name: e.target.value })}
-              className="bg-card border-border/60"
+              className="bg-card border-border/60 text-base md:text-sm"
             />
+            </div>
+            <div className="space-y-1.5">
+            <label htmlFor={`${formId}-phone`} className="block text-sm font-medium">Phone (required)</label>
             <Input
+              id={`${formId}-phone`}
+              name="phone"
+              autoComplete="tel" inputMode="tel" required
               placeholder="Phone *"
               type="tel"
               value={lead.phone}
               onChange={(e) => setLead({ ...lead, phone: e.target.value })}
-              className="bg-card border-border/60"
+              className="bg-card border-border/60 text-base md:text-sm"
             />
+            </div>
+            <div className="space-y-1.5">
+            <label htmlFor={`${formId}-email`} className="block text-sm font-medium">Email (optional)</label>
             <Input
+              id={`${formId}-email`}
+              name="email"
+              autoComplete="email"
               placeholder="Email"
               type="email"
               value={lead.email}
               onChange={(e) => setLead({ ...lead, email: e.target.value })}
-              className="bg-card border-border/60"
+              className="bg-card border-border/60 text-base md:text-sm"
             />
+            </div>
+            <div className="space-y-1.5">
+            <label htmlFor={`${formId}-address`} className="block text-sm font-medium">Property address (optional)</label>
             <Input
+              id={`${formId}-address`}
+              name="address"
+              autoComplete="street-address"
               placeholder="Property address"
               value={lead.address}
               onChange={(e) => setLead({ ...lead, address: e.target.value })}
-              className="bg-card border-border/60"
+              className="bg-card border-border/60 text-base md:text-sm"
             />
+            </div>
+            <div className="space-y-1.5">
+            <label htmlFor={`${formId}-message`} className="block text-sm font-medium">Anything we should know? (optional)</label>
             <Textarea
+              id={`${formId}-message`}
+              name="message"
+              
               placeholder="Anything we should know? (optional)"
               rows={2}
               value={lead.message}
               onChange={(e) => setLead({ ...lead, message: e.target.value })}
-              className="bg-card border-border/60"
+              className="bg-card border-border/60 text-base md:text-sm"
             />
+            </div>
             <Button
               type="submit"
               disabled={leadSending || !lead.name.trim() || !lead.phone.trim()}
@@ -252,7 +283,7 @@ export default function DamageCheckForm() {
             >
               {leadSending ? "Sending…" : "Book My Free Inspection"}
             </Button>
-            {leadError && <p className="text-sm text-destructive text-center">{leadError}</p>}
+            {leadError && <p role="alert" className="text-sm text-destructive text-center">{leadError}</p>}
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
               <Phone className="w-3 h-3" /> Prefer to talk now? Call{" "}
               <a href="tel:4409206133" className="text-primary font-semibold">(440) 920-6133</a>
