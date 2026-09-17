@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, Wrench, Home, Layers, Droplets, Square, DoorOpen, AlertTriangle, Trees, MapPin, Package, Umbrella, Camera } from "lucide-react";
+import { ChevronDown, Wrench, Home, Layers, Droplets, Square, DoorOpen, AlertTriangle, Trees, MapPin, Package, Umbrella, Camera, WalletCards } from "lucide-react";
 
 const SERVICES = [
   { label: "Roofing", href: "/roofing", icon: Home, useLink: true },
@@ -11,12 +11,12 @@ const SERVICES = [
   { label: "Decks & Outdoor Living", href: "/decks", icon: Trees, useLink: true },
   { label: "Service Areas", href: "/service-areas", icon: MapPin, useLink: true },
   { label: "Products", href: "/products", icon: Package, useLink: true },
+  { label: "Storm Damage", href: "/storm-damage", icon: AlertTriangle, useLink: true },
   { label: "Insurance Process", href: "/insurance-claims", icon: Umbrella, useLink: true },
-  { label: "Storm Damage", href: "/insurance-claims", icon: AlertTriangle, useLink: true },
   { label: "Damage Check", href: "/damage-assessment", icon: Camera, useLink: true },
+  { label: "Financing", href: "/financing", icon: WalletCards, useLink: true },
 ];
 
-// ── Mobile version ──────────────────────────────────────────────────────────
 function MobileDropdown({ onClose }) {
   const [open, setOpen] = useState(false);
 
@@ -61,7 +61,6 @@ function MobileDropdown({ onClose }) {
   );
 }
 
-// ── Desktop version ─────────────────────────────────────────────────────────
 export default function ServicesDropdown({ mobile = false, onClose }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);

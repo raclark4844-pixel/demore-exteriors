@@ -12,7 +12,7 @@ import MobileQuickActions from "@/components/MobileQuickActions";
 const LOGO_URL = "https://media.base44.com/images/public/user_6a22dc88783b484dd6ef2b08/899ea39b7_Demorelogo.jpg";
 
 const navLinks = [
-  { label: "Storm Damage", href: "/insurance-claims", to: "/insurance-claims" },
+  { label: "Storm Damage", href: "/storm-damage", to: "/storm-damage" },
   { label: "Damage Check", href: "/damage-assessment", to: "/damage-assessment" },
   { label: "Insurance Process", href: "/insurance-claims", to: "/insurance-claims" },
   { label: "Reviews", href: "/reviews", to: "/reviews" },
