@@ -8,6 +8,8 @@ import { Phone, ChevronRight, CheckCircle, Shield, Award, Hammer, Home, Droplets
 import { motion } from "framer-motion";
 import useSEO from "@/hooks/useSEO";
 import CityLocalDetail from "@/components/CityLocalDetail";
+import CitySourceDetail from "@/components/CitySourceDetail";
+import { CITY_LOCAL_SOURCES } from "@/lib/cityLocalSources";
 import { CITY_DEEP_DIVE } from "@/lib/cityDeepDive";
 import { isCitySeoIndexable } from "@/lib/citySeoIndex";
 
@@ -92,7 +94,7 @@ export default function CityPage() {
   const { county, city } = useParams();
   const countyData = findCounty(county);
   const communityData = countyData ? findCommunity(county, city) : null;
-  const codeInfo = communityData ? getCodeInfo(communityData.name) : CITY_CODE_INFO["default"];
+  const codeInfo = CITY_LOCAL_SOURCES[city] ? { permit: "Confirm the permit for your project scope", note: CITY_LOCAL_SOURCES[city].permit } : communityData ? getCodeInfo(communityData.name) : CITY_CODE_INFO["default"];
 
   const cityName = communityData?.name || "";
   const countyName = countyData?.county || "";
@@ -290,9 +292,7 @@ export default function CityPage() {
       </section>
 
       {/* Unique local deep-dive (priority cities only) */}
-      {CITY_DEEP_DIVE[city] && (
-        <CityLocalDetail cityName={name} data={CITY_DEEP_DIVE[city]} />
-      )}
+      {CITY_LOCAL_SOURCES[city] ? <CitySourceDetail citySlug={city} /> : CITY_DEEP_DIVE[city] ? <CityLocalDetail cityName={name} data={CITY_DEEP_DIVE[city]} /> : null}
 
       {/* Roofing Services */}
       <ServiceSection

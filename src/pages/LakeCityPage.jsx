@@ -1,10 +1,11 @@
 import React from "react";
-import { Link, useParams, Navigate } from "react-router-dom";
+import { Link, useParams, useLocation, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Phone, ChevronRight, MapPin, Home, Hammer, Droplets, CloudLightning, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CitySourceDetail from "@/components/CitySourceDetail";
 import useSEO from "@/hooks/useSEO";
 import { LAKE_CITY_CONTENT } from "@/lib/lakeCityContent";
 import { isCitySeoIndexable } from "@/lib/citySeoIndex";
@@ -194,13 +195,16 @@ function CityView({ city }) {
         </div>
       </section>
 
+      <CitySourceDetail citySlug={slug} />
       <Footer />
     </div>
   );
 }
 
 export default function LakeCityPage() {
-  const { city: slug } = useParams();
+  const { city: routeCity } = useParams();
+  const location = useLocation();
+  const slug = routeCity || location.pathname.split("/").filter(Boolean).at(-1);
   const city = LAKE_CITY_CONTENT[slug];
   if (!city) return <Navigate to="/service-areas" replace />;
   return <CityView city={city} />;

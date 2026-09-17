@@ -5,6 +5,7 @@ import useSEO from "@/hooks/useSEO";
 import { base44 } from "@/api/base44Client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ProjectOutcomes from "@/components/ProjectOutcomes";
 import PhotoLightbox from "@/components/PhotoLightbox";
 import { Camera, Facebook, Images, Trash2 } from "lucide-react";
 
@@ -132,6 +133,7 @@ export default function Gallery() {
         </div>
       </section>
 
+      <ProjectOutcomes />
       {/* Filters */}
       <section className="pb-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,5 +1,7 @@
 import InstantEstimateCTA from '@/components/InstantEstimateCTA';
 import React from "react";
+import StormAlertBar from "@/components/StormAlertBar";
+import ProjectOutcomes from "@/components/ProjectOutcomes";
 import useSEO from "@/hooks/useSEO";
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
@@ -58,7 +60,9 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
       <HeroSection />
+      <StormAlertBar />
       <HomeTrustBar />
+      <ProjectOutcomes />
       <InstantEstimateCTA />
       <ServicesSection />
       <StormDamageSection />

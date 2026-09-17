@@ -1,0 +1,66 @@
+{
+  "name": "CustomerFollowup",
+  "type": "object",
+  "properties": {
+    "job_reference": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "email_consent": {
+      "type": "boolean",
+      "default": false
+    },
+    "sms_consent": {
+      "type": "boolean",
+      "default": false
+    },
+    "consent_reference": {
+      "type": "string"
+    },
+    "opted_out": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "job_reference",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -91,7 +91,7 @@ export default function Reviews() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Link to="/reviews#write">
+            <Link to="/review-us">
               <button className="inline-flex items-center gap-2 bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold text-sm px-6 py-3 rounded-md transition-colors">
                 <PenLine className="w-4 h-4" /> Write a Review
               </button>
