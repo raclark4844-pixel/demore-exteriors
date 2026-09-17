@@ -39,7 +39,7 @@ const PREFILL_RULES = [
 export function initLeadCTAInterceptor() {
   const handler = (e) => {
     const el = e.target && e.target.closest ? e.target.closest("a,button") : null;
-    if (!el || el.closest("form")) return;
+    if (!el || el.closest("form") || el.closest('[data-lead-cta="direct"]')) return;
     const href = el.getAttribute("href") || "";
     if (href.startsWith("tel:") || href.startsWith("mailto:")) return;
     const text = (el.innerText || el.textContent || "").trim().toLowerCase();
