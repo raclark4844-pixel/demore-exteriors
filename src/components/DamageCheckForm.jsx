@@ -135,13 +135,24 @@ export default function DamageCheckForm() {
       {/* Upload + assessment */}
       <div className="space-y-5">
         <div
+          role="button"
+          tabIndex={uploading || photos.length >= MAX_PHOTOS ? -1 : 0}
+          aria-label="Upload damage photos"
+          aria-disabled={uploading || photos.length >= MAX_PHOTOS}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!uploading && photos.length < MAX_PHOTOS) fileInputRef.current?.click();
+            }
+          }}
           onClick={() => !uploading && photos.length < MAX_PHOTOS && fileInputRef.current?.click()}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          className="border-2 border-dashed border-border rounded-2xl p-8 text-center cursor-pointer hover:border-primary/60 transition-colors bg-card/50"
+          className="border-2 border-dashed border-border rounded-2xl p-8 text-center cursor-pointer hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-colors bg-card/50"
         >
           <input
             ref={fileInputRef}
+            aria-label="Choose up to three damage photos"
             type="file"
             accept="image/*"
             multiple
@@ -169,7 +180,8 @@ export default function DamageCheckForm() {
                 <button
                   onClick={() => setPhotos(photos.filter((_, j) => j !== i))}
                   className="absolute -top-2 -right-2 bg-background border border-border rounded-full p-1 hover:text-primary transition-colors"
-                  aria-label="Remove photo"
+                  type="button"
+                  aria-label={`Remove photo ${i + 1}: ${p.name}`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -194,7 +206,7 @@ export default function DamageCheckForm() {
           )}
         </Button>
 
-        {error && <p className="text-sm text-destructive text-center">{error}</p>}
+        {error && <p role="alert" className="text-sm text-destructive text-center">{error}</p>}
 
         {assessment && (
           <motion.div
