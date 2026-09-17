@@ -1,0 +1,37 @@
+{
+  "name": "Competitor",
+  "type": "object",
+  "properties": {
+    "company": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "base_market": {
+      "type": "string",
+      "description": "Base/Market location"
+    },
+    "likely_service_counties": {
+      "type": "string",
+      "description": "Likely service counties"
+    },
+    "trades_products": {
+      "type": "string",
+      "description": "Trades/Products offered"
+    },
+    "market_type": {
+      "type": "string",
+      "description": "Market type (Residential/Commercial/etc)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Source URL"
+    }
+  },
+  "required": [
+    "company"
+  ]
+}

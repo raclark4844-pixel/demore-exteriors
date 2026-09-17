@@ -1,0 +1,40 @@
+{
+  "name": "Autonomous Audit Run Finalizer",
+  "description": "When an autonomous website audit AgentJob reaches a terminal state, synchronize the WebsiteAuditRun record and final audit status.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "AgentJobs",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.data.inputData.autonomousAudit == true and (.trigger.data.status == \"COMPLETED\" or .trigger.data.status == \"REJECTED\" or .trigger.data.status == \"BLOCKED\" or .trigger.data.status == \"FAILED\" or .trigger.data.status == \"CANCELLED\") and .trigger.old_data.status != .trigger.data.status }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "autonomous_audit_run_finalizer",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "finalize_audit": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "finalizeAutonomousAuditRun",
+            "args": {
+              "job_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Finalize autonomous audit",
+            "description": "Sync terminal AgentJob outcome to WebsiteAuditRun"
+          }
+        }
+      }
+    ]
+  }
+}

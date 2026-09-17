@@ -1,0 +1,113 @@
+{
+  "name": "AgentRegistry",
+  "type": "object",
+  "properties": {
+    "agentId": {
+      "type": "string",
+      "description": "Stable agent identifier, e.g. SEO_DEMORE"
+    },
+    "agentName": {
+      "type": "string",
+      "description": "Display name of the agent"
+    },
+    "agentType": {
+      "type": "string",
+      "enum": [
+        "SPECIALIST",
+        "ORCHESTRATOR",
+        "IMPLEMENTER"
+      ],
+      "description": "Role of the agent in the orchestration system"
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What this agent is responsible for"
+    },
+    "authority": {
+      "type": "string",
+      "enum": [
+        "ADVISE",
+        "RECOMMEND",
+        "ROUTE",
+        "IMPLEMENT"
+      ],
+      "description": "Decision authority level of the agent"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INACTIVE",
+        "PENDING"
+      ],
+      "default": "PENDING",
+      "description": "Operational status of the agent"
+    },
+    "endpointType": {
+      "type": "string",
+      "enum": [
+        "PLATFORM_AGENT",
+        "BACKEND_FUNCTION",
+        "FUTURE",
+        "NONE"
+      ],
+      "default": "FUTURE",
+      "description": "How the agent is (or will be) invoked"
+    },
+    "endpointReference": {
+      "type": "string",
+      "description": "Reference to the agent implementation (file path, function name, or channel)"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What the agent can do"
+    },
+    "prohibitedActions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Actions the agent must never take"
+    },
+    "requiresOwnerApprovalFor": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Actions that require owner approval before execution"
+    }
+  },
+  "required": [
+    "agentId",
+    "agentName",
+    "agentType"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

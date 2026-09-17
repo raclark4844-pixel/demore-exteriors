@@ -1,0 +1,70 @@
+{
+  "name": "EstimateRequest",
+  "type": "object",
+  "properties": {
+    "fullName": {
+      "type": "string",
+      "description": "Full name of the person requesting the estimate"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "city": {
+      "type": "string",
+      "description": "City where the property is located"
+    },
+    "county": {
+      "type": "string",
+      "description": "County (if known)"
+    },
+    "propertyType": {
+      "type": "string",
+      "description": "residential or commercial"
+    },
+    "serviceType": {
+      "type": "string",
+      "description": "roofing | siding | windows | doors | gutters | decks | storm damage | other"
+    },
+    "projectType": {
+      "type": "string",
+      "description": "repair | replacement | new | insurance claim | not sure"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the project"
+    },
+    "preferredContact": {
+      "type": "string",
+      "description": "call | text | email"
+    },
+    "urgency": {
+      "type": "string",
+      "description": "emergency | soon | planning"
+    },
+    "pageUrl": {
+      "type": "string",
+      "description": "Page the conversation started on"
+    },
+    "status": {
+      "type": "string",
+      "default": "new",
+      "description": "Lead status"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was captured"
+    }
+  },
+  "required": [
+    "fullName",
+    "phone",
+    "city",
+    "serviceType"
+  ]
+}

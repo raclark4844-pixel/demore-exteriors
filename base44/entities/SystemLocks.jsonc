@@ -1,0 +1,71 @@
+{
+  "name": "SystemLocks",
+  "type": "object",
+  "properties": {
+    "lockId": {
+      "type": "string",
+      "description": "Human-readable lock reference"
+    },
+    "scope": {
+      "type": "string",
+      "description": "What area is locked, e.g. SEO_PRODUCTION_SENSITIVE"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the lock exists"
+    },
+    "protectedItems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Items protected by this lock"
+    },
+    "createdBy": {
+      "type": "string",
+      "description": "Agent or human that created the lock"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "RELEASED",
+        "EXPIRED"
+      ],
+      "default": "ACTIVE",
+      "description": "Lock status"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the lock auto-expires (null = until released)"
+    }
+  },
+  "required": [
+    "scope",
+    "reason",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

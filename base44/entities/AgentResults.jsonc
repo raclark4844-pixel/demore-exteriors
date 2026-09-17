@@ -1,0 +1,106 @@
+{
+  "name": "AgentResults",
+  "type": "object",
+  "properties": {
+    "resultId": {
+      "type": "string",
+      "description": "Human-readable result reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job the result belongs to"
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Agent that produced the result"
+    },
+    "resultType": {
+      "type": "string",
+      "enum": [
+        "ANALYSIS",
+        "RECOMMENDATION",
+        "FINDING",
+        "VALIDATION"
+      ],
+      "description": "Kind of result"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Summary of the result"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations produced"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Evidence supporting the result"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Confidence level 0-100"
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Risks identified"
+    },
+    "nextActions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Suggested next actions"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE for test workflow records"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE = archived; excluded from default dashboard views and KPIs, retained permanently in audit history"
+    }
+  },
+  "required": [
+    "changeId",
+    "resultType"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "name": "WebsiteAuditRun",
+  "type": "object",
+  "properties": {
+    "auditRunId": {
+      "type": "string",
+      "description": "Human-readable audit run reference"
+    },
+    "profileId": {
+      "type": "string",
+      "description": "Audit profile executed"
+    },
+    "profileTitle": {
+      "type": "string",
+      "description": "Human-readable audit profile title"
+    },
+    "roleId": {
+      "type": "string",
+      "description": "Specialist role used for the audit"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Shared orchestration Change ID"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Agent job reference"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "RUNNING",
+        "COMPLETED",
+        "REJECTED",
+        "BLOCKED",
+        "FAILED",
+        "SKIPPED"
+      ],
+      "default": "CREATED"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "siteSnapshot": {
+      "type": "object",
+      "description": "Deterministic live-site signals collected before the AI audit"
+    },
+    "resultSummary": {
+      "type": "string",
+      "description": "Short audit outcome summary"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error detail if the audit failed"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "auditRunId",
+    "profileId",
+    "roleId"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

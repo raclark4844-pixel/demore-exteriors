@@ -1,0 +1,136 @@
+{
+  "name": "StagedWebsiteChange",
+  "type": "object",
+  "properties": {
+    "stageId": {
+      "type": "string",
+      "description": "Human-readable staged change reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Shared Change ID"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Planning/implementation job reference"
+    },
+    "recommendationId": {
+      "type": "string",
+      "description": "Source ImprovementRecommendation record ID"
+    },
+    "repository": {
+      "type": "string",
+      "description": "GitHub repository owner/name"
+    },
+    "baseBranch": {
+      "type": "string",
+      "default": "main"
+    },
+    "stageBranch": {
+      "type": "string",
+      "description": "GitHub staging branch name"
+    },
+    "pullRequestNumber": {
+      "type": "number"
+    },
+    "pullRequestUrl": {
+      "type": "string"
+    },
+    "previewUrl": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "NEEDS_GITHUB_CONNECTION",
+        "NEEDS_REPO_SYNC",
+        "READY_TO_STAGE",
+        "STAGING",
+        "PR_OPEN",
+        "PREVIEW_READY",
+        "QA_PASSED",
+        "AWAITING_OWNER_PRODUCTION",
+        "APPROVED_FOR_PRODUCTION",
+        "BLOCKED",
+        "FAILED",
+        "ARCHIVED"
+      ],
+      "default": "CREATED"
+    },
+    "filesAffected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptanceTests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "protectedItems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stagingReport": {
+      "type": "string"
+    },
+    "error": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "stageId",
+    "changeId",
+    "jobId",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

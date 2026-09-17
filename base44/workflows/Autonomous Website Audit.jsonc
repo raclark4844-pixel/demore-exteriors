@@ -1,0 +1,45 @@
+{
+  "name": "Autonomous Website Audit",
+  "description": "Runs one rotating advisory-only website specialist audit each weekday morning. Audits are grounded in a deterministic live-site snapshot and cannot directly modify production.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "30 6 * * 1-5",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "autonomous_website_audit",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_audit": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "runAutonomousWebsiteAudit",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run autonomous website audit",
+            "description": "Capture live-site signals, route one rotating specialist audit, QA review, and store the result"
+          }
+        }
+      }
+    ]
+  }
+}

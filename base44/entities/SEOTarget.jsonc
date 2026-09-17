@@ -1,0 +1,43 @@
+{
+  "name": "SEOTarget",
+  "type": "object",
+  "properties": {
+    "suggested_page_post": {
+      "type": "string",
+      "description": "Suggested Page/Post title"
+    },
+    "target_type": {
+      "type": "string",
+      "description": "Target Type (Roofing manufacturer, Siding manufacturer, etc)"
+    },
+    "county_area": {
+      "type": "string",
+      "description": "County/Area"
+    },
+    "keyword_cluster": {
+      "type": "string",
+      "description": "Keyword Cluster"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "description": "Priority level"
+    },
+    "action": {
+      "type": "string",
+      "description": "Recommended action"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional description (up to 1000 characters)"
+    }
+  },
+  "required": [
+    "suggested_page_post"
+  ]
+}

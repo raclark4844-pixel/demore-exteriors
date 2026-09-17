@@ -1,0 +1,104 @@
+{
+  "name": "AIProviderRequestLog",
+  "type": "object",
+  "properties": {
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job the request relates to"
+    },
+    "roleId": {
+      "type": "string",
+      "description": "Specialist role that made the request"
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Agent identity associated with the request"
+    },
+    "provider": {
+      "type": "string",
+      "description": "AI provider used for this request"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model used for this request"
+    },
+    "purpose": {
+      "type": "string",
+      "enum": [
+        "CLASSIFICATION",
+        "SPECIALIST_WORK",
+        "REVIEW",
+        "CROSS_QUESTION",
+        "REVISION",
+        "VALIDATION",
+        "OTHER"
+      ],
+      "description": "Why the request was made"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "ERROR"
+      ],
+      "description": "Request outcome"
+    },
+    "requestSummary": {
+      "type": "string",
+      "description": "Short summary of the request (no full prompts)"
+    },
+    "responseSummary": {
+      "type": "string",
+      "description": "Short summary of the response"
+    },
+    "tokens": {
+      "type": "number",
+      "description": "Token usage when available"
+    },
+    "latencyMs": {
+      "type": "number",
+      "description": "Request latency in milliseconds"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error details if the request failed"
+    },
+    "fallbackUsed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this request ran on a fallback provider"
+    },
+    "attemptedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was attempted"
+    }
+  },
+  "required": [
+    "provider",
+    "purpose",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": false,
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

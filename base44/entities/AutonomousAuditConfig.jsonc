@@ -1,0 +1,76 @@
+{
+  "name": "AutonomousAuditConfig",
+  "type": "object",
+  "properties": {
+    "configId": {
+      "type": "string",
+      "description": "Stable config identifier, normally DEFAULT"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Master switch for scheduled website audits"
+    },
+    "timezone": {
+      "type": "string",
+      "default": "America/New_York",
+      "description": "Audit schedule timezone"
+    },
+    "scheduleDescription": {
+      "type": "string",
+      "description": "Human-readable schedule"
+    },
+    "profileIndex": {
+      "type": "number",
+      "default": 0,
+      "description": "Next audit profile index in the rotation"
+    },
+    "maxJobsPerRun": {
+      "type": "number",
+      "default": 1,
+      "description": "Maximum AI audit jobs created per scheduled run"
+    },
+    "lastRunAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last scheduled audit start time"
+    },
+    "lastProfileId": {
+      "type": "string",
+      "description": "Most recently executed audit profile"
+    },
+    "lastRunStatus": {
+      "type": "string",
+      "description": "Most recent run outcome"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Operational notes"
+    }
+  },
+  "required": [
+    "configId"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

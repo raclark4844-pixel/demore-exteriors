@@ -1,0 +1,115 @@
+{
+  "name": "ImplementationQueue",
+  "type": "object",
+  "properties": {
+    "implementationId": {
+      "type": "string",
+      "description": "Human-readable implementation reference"
+    },
+    "changeId": {
+      "type": "string",
+      "description": "Change ID shared by all records of a workflow (DES-YYYY-######)"
+    },
+    "jobId": {
+      "type": "string",
+      "description": "Job being implemented"
+    },
+    "objective": {
+      "type": "string",
+      "description": "What the implementation should accomplish"
+    },
+    "approvedBy": {
+      "type": "string",
+      "description": "Approval(s) satisfied before entry (agent(s) or owner)"
+    },
+    "filesAffected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Files expected to be modified"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Implementation requirements"
+    },
+    "protectedItems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Items that must not be touched during implementation"
+    },
+    "acceptanceTests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tests that must pass for acceptance"
+    },
+    "rollbackPlan": {
+      "type": "string",
+      "description": "How to roll back if implementation fails"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "FAILED",
+        "ROLLED_BACK"
+      ],
+      "default": "QUEUED",
+      "description": "Implementation status"
+    },
+    "implementationReport": {
+      "type": "string",
+      "description": "Report produced after implementation"
+    },
+    "implementedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When implementation completed"
+    },
+    "isTest": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE for test workflow records"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "TRUE = archived; excluded from default dashboard views and KPIs, retained permanently in audit history"
+    }
+  },
+  "required": [
+    "changeId",
+    "objective"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
