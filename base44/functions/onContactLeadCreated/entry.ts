@@ -3,6 +3,16 @@ import { Resend } from 'npm:resend@4.0.0';
 
 const SPREADSHEET_ID = "1TBwiXElXwKjDJbsm6UTi1NZnQk-CvuU4KI1OpHBrWgo";
 const SHEET_NAME = "Leads";
+const DEFAULT_RECIPIENTS = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
+
+const esc = (value) => String(value ?? "")
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
+  .replaceAll("'", "&#039;");
+
+const show = (value, fallback = "Not provided") => value ? esc(value) : fallback;
 
 Deno.serve(async (req) => {
   try {
@@ -10,7 +20,6 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const lead = payload.data;
 
-    // Sync lead to Google Sheet
     try {
       const { accessToken } = await base44.asServiceRole.connectors.getConnection("googlesheets");
       const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
@@ -21,6 +30,15 @@ Deno.serve(async (req) => {
         lead.email || "",
         lead.address || "",
         lead.service_type || "",
+        lead.insurance_claim_filed || "",
+        lead.claim_carrier || "",
+        lead.claim_number || "",
+        lead.date_of_loss || "",
+        lead.adjuster_name || "",
+        lead.adjuster_phone || "",
+        lead.adjuster_email || "",
+        lead.lead_source || "website",
+        lead.preferred_language || "en",
         lead.message || "",
         lead.status || "new"
       ];
@@ -37,47 +55,62 @@ Deno.serve(async (req) => {
     }
 
     const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    const from = Deno.env.get("RESEND_FROM_EMAIL") || "Demore Exterior Solutions <no-reply@demorehomesolutions.com>";
+    const configuredRecipients = (Deno.env.get("LEAD_NOTIFICATION_EMAILS") || "")
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+    const recipients = configuredRecipients.length ? configuredRecipients : DEFAULT_RECIPIENTS;
+    const sourceLabel = (lead.lead_source || "website").replaceAll("_", " ");
 
     await resend.emails.send({
-      from: "Demore Exterior Solutions <no-reply@demorehomesolutions.com>",
-      to: ["ryan@demorehomesolutions.com"],
-      reply_to: lead.email || undefined,
-      subject: `New Estimate Request from ${lead.name}`,
+      from,
+      to: recipients,
+      reply_to: lead.email || "ryan@demoreexteriorsolutions.com",
+      subject: `New ${lead.service_type === "storm_damage" ? "Storm Damage " : ""}Lead from ${lead.name} (${sourceLabel})`,
       html: `
-        <h2>New Estimate Request</h2>
-        <p>A new lead was submitted on the website:</p>
-        <table style="border-collapse:collapse;width:100%">
-          <tr><td style="padding:6px;font-weight:bold">Name</td><td style="padding:6px">${lead.name}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Phone</td><td style="padding:6px">${lead.phone}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Email</td><td style="padding:6px">${lead.email || 'Not provided'}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Address</td><td style="padding:6px">${lead.address || 'Not provided'}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Service</td><td style="padding:6px">${lead.service_type || 'Not specified'}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Message</td><td style="padding:6px">${lead.message || 'None'}</td></tr>
+        <h2>New Demore Lead</h2>
+        <p>A new lead was captured from <strong>${esc(sourceLabel)}</strong>.</p>
+        <table style="border-collapse:collapse;width:100%;max-width:760px">
+          <tr><td style="padding:6px;font-weight:bold">Name</td><td style="padding:6px">${show(lead.name)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Phone</td><td style="padding:6px">${show(lead.phone)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Email</td><td style="padding:6px">${show(lead.email)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Property address</td><td style="padding:6px">${show(lead.address)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Service</td><td style="padding:6px">${show(lead.service_type, "Not specified")}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Claim filed?</td><td style="padding:6px">${show(lead.insurance_claim_filed, "Not specified")}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Carrier</td><td style="padding:6px">${show(lead.claim_carrier)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Claim number</td><td style="padding:6px">${show(lead.claim_number)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Date of loss</td><td style="padding:6px">${show(lead.date_of_loss)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Adjuster</td><td style="padding:6px">${show(lead.adjuster_name)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Adjuster phone</td><td style="padding:6px">${show(lead.adjuster_phone)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Adjuster email</td><td style="padding:6px">${show(lead.adjuster_email)}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Language</td><td style="padding:6px">${show(lead.preferred_language, "en")}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Message</td><td style="padding:6px">${show(lead.message, "None")}</td></tr>
         </table>
-        <p><a href="https://www.demorehomesolutions.com">Log in to review leads</a></p>
+        <p><a href="https://www.demoreexteriorsolutions.com">Demore Exterior Solutions</a></p>
       `
     });
 
-    // Auto-reply to the person who submitted the form (only if they provided an email)
     if (lead.email) {
       await resend.emails.send({
-        from: "Demore Exterior Solutions <no-reply@demorehomesolutions.com>",
+        from,
         to: [lead.email],
-        reply_to: "ryan@demorehomesolutions.com",
+        reply_to: "ryan@demoreexteriorsolutions.com",
         subject: "We received your request — Demore Exterior Solutions",
         html: `
-          <h2>Thanks, ${lead.name}!</h2>
-          <p>We've received your estimate request and will be in touch shortly.</p>
-          <p>In the meantime, feel free to call us directly at <strong>(440) 920-6133</strong>.</p>
+          <h2>Thanks, ${esc(lead.name)}!</h2>
+          <p>We've received your request and will be in touch shortly.</p>
+          <p>If this is storm damage or an active leak, call <strong>(440) 920-6133</strong>. Our call line is answered 24/7 for intake.</p>
           <br/>
-          <p>— Ryan Bomer & the Demore Exterior Solutions Team</p>
-          <p style="color:#888;font-size:12px">6348 Meldon Dr, Mentor, OH 44060 | www.demorehomesolutions.com</p>
+          <p>— Demore Exterior Solutions</p>
+          <p style="color:#888;font-size:12px">6348 Meldon Dr, Mentor, OH 44060 | www.demoreexteriorsolutions.com</p>
         `
       });
     }
 
-    return Response.json({ success: true });
+    return Response.json({ success: true, notified: recipients });
   } catch (error) {
+    console.error("Lead notification failed:", error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
