@@ -115,8 +115,9 @@ export default async function(req) {
   if (['PR_OPEN', 'PREVIEW_READY', 'QA_PASSED', 'AWAITING_OWNER_PRODUCTION', 'APPROVED_FOR_PRODUCTION'].includes(stage.status)) {
     return Response.json({ status: stage.status, alreadyStaged: true, stageId: stage.stageId, pullRequestUrl: stage.pullRequestUrl });
   }
-  if (stage.status !== 'READY_TO_STAGE') {
-    return Response.json({ status: 'SKIPPED', reason: `Stage must be READY_TO_STAGE (currently ${stage.status})` }, { status: 409 });
+  const retryableStage = ['READY_TO_STAGE', 'STAGING', 'BLOCKED'].includes(stage.status);
+  if (!retryableStage) {
+    return Response.json({ status: 'SKIPPED', reason: `Stage is not retryable from ${stage.status}` }, { status: 409 });
   }
 
   const implementations = await sr.entities.ImplementationQueue.filter({ changeId: stage.changeId });
@@ -168,12 +169,64 @@ export default async function(req) {
     const parentCommit = await githubRequest(accessToken, `/repos/${REPOSITORY}/git/commits/${parentSha}`);
     const baseTreeSha = parentCommit.tree.sha;
 
-    // Refuse to overwrite an existing stage branch. This makes retries safe and auditable.
+    const buildPrPayload = (files = allowedPaths) => ({
+      title: `${stage.changeId}: staged website improvement`,
+      head: stage.stageBranch,
+      base: BASE_BRANCH,
+      body: `## Controlled staging — not production\n\n**Change ID:** ${stage.changeId}\n\n**Objective:** ${implementation.objective}\n\nThis PR was generated only after the owner-approved planning gate. It is intended for Vercel preview and QA. It must not be merged as a substitute for the separate Base44 production approval/publish process.\n\n### Files\n${files.map((x) => `- \`${x}\``).join('\n')}\n\n### Acceptance tests\n${(implementation.acceptanceTests || []).map((x) => `- ${x}`).join('\n')}`,
+      draft: false,
+    });
+
+    const findOpenPr = async () => {
+      const head = encodeURIComponent(`raclark4844-pixel:${stage.stageBranch}`);
+      const prs = await githubRequest(accessToken, `/repos/${REPOSITORY}/pulls?state=open&head=${head}&base=${encodeURIComponent(BASE_BRANCH)}`);
+      return Array.isArray(prs) ? prs[0] : null;
+    };
+
+    // Idempotent recovery: if a prior/concurrent invocation already created this unique
+    // Change-ID branch, reuse it instead of treating the retry as a failure.
+    let existingRef = null;
     try {
-      await githubRequest(accessToken, `/repos/${REPOSITORY}/git/ref/heads/${encodeURIComponent(stage.stageBranch)}`);
-      throw new Error(`Stage branch already exists: ${stage.stageBranch}. Review or archive it before retrying.`);
+      existingRef = await githubRequest(accessToken, `/repos/${REPOSITORY}/git/ref/heads/${encodeURIComponent(stage.stageBranch)}`);
     } catch (error) {
       if (error?.status !== 404) throw error;
+    }
+    if (existingRef) {
+      let existingPr = await findOpenPr();
+      if (!existingPr) {
+        try {
+          existingPr = await githubRequest(accessToken, `/repos/${REPOSITORY}/pulls`, {
+            method: 'POST', body: JSON.stringify(buildPrPayload(allowedPaths)),
+          });
+        } catch (error) {
+          if (error?.status !== 422) throw error;
+          existingPr = await findOpenPr();
+        }
+      }
+      if (!existingPr) throw new Error(`Stage branch exists but no recoverable pull request was found: ${stage.stageBranch}`);
+
+      await sr.entities.StagedWebsiteChange.update(stage.id, {
+        status: 'PR_OPEN',
+        commitSha: existingRef.object.sha,
+        pullRequestNumber: existingPr.number,
+        pullRequestUrl: existingPr.html_url,
+        previewStatus: stage.previewStatus || 'PENDING',
+        qaVerdict: stage.qaVerdict || 'PENDING',
+        stagingReport: `Existing staging branch/PR recovered idempotently. GitHub PR #${existingPr.number} is open; production remains untouched.`,
+        error: null,
+        updatedAt: nowIso(),
+      });
+      await writeAudit(sr, {
+        changeId: stage.changeId, jobId: job.jobId, agentId: 'STAGING_ORCHESTRATOR', eventType: 'VALIDATION',
+        action: `Existing staging PR recovered idempotently: #${existingPr.number}`,
+        previousState: stage.status, newState: 'PR_OPEN',
+        details: `Branch ${stage.stageBranch}; commit ${existingRef.object.sha}. Duplicate/retry invocation did not create another branch or production change.`,
+      });
+      return Response.json({
+        status: 'PR_OPEN', alreadyStaged: true, stageId: stage.stageId, changeId: stage.changeId,
+        branch: stage.stageBranch, commitSha: existingRef.object.sha,
+        pullRequestNumber: existingPr.number, pullRequestUrl: existingPr.html_url,
+      });
     }
 
     const sources = [];
@@ -238,24 +291,37 @@ export default async function(req) {
         parents: [parentSha],
       }),
     });
-    await githubRequest(accessToken, `/repos/${REPOSITORY}/git/refs`, {
-      method: 'POST', body: JSON.stringify({ ref: `refs/heads/${stage.stageBranch}`, sha: commit.sha }),
-    });
-    const pr = await githubRequest(accessToken, `/repos/${REPOSITORY}/pulls`, {
-      method: 'POST',
-      body: JSON.stringify({
-        title: `${stage.changeId}: staged website improvement`,
-        head: stage.stageBranch,
-        base: BASE_BRANCH,
-        body: `## Controlled staging — not production\n\n**Change ID:** ${stage.changeId}\n\n**Objective:** ${implementation.objective}\n\nThis PR was generated only after the owner-approved planning gate. It is intended for Vercel preview and QA. It must not be merged as a substitute for the separate Base44 production approval/publish process.\n\n### Files\n${[...modified.keys()].map((x) => `- \`${x}\``).join('\n')}\n\n### Acceptance tests\n${(implementation.acceptanceTests || []).map((x) => `- ${x}`).join('\n')}`,
-        draft: false,
-      }),
-    });
+    let branchCommitSha = commit.sha;
+    try {
+      await githubRequest(accessToken, `/repos/${REPOSITORY}/git/refs`, {
+        method: 'POST', body: JSON.stringify({ ref: `refs/heads/${stage.stageBranch}`, sha: commit.sha }),
+      });
+    } catch (error) {
+      // A concurrent invocation may have won the branch-creation race. Reuse that
+      // Change-ID branch rather than overwriting the stage with a false BLOCKED state.
+      if (error?.status !== 422) throw error;
+      const winnerRef = await githubRequest(accessToken, `/repos/${REPOSITORY}/git/ref/heads/${encodeURIComponent(stage.stageBranch)}`);
+      branchCommitSha = winnerRef.object.sha;
+    }
+
+    let pr = await findOpenPr();
+    if (!pr) {
+      try {
+        pr = await githubRequest(accessToken, `/repos/${REPOSITORY}/pulls`, {
+          method: 'POST', body: JSON.stringify(buildPrPayload([...modified.keys()])),
+        });
+      } catch (error) {
+        // Same idempotency rule for a concurrent PR-creation race.
+        if (error?.status !== 422) throw error;
+        pr = await findOpenPr();
+      }
+    }
+    if (!pr) throw new Error(`Stage branch exists but pull request creation could not be recovered: ${stage.stageBranch}`);
 
     const report = `${ai.json.summary || 'Staged patch generated.'} Changed ${modified.size} approved file(s). GitHub PR #${pr.number} is open; Vercel preview deployment is expected automatically. Production remains untouched.`;
     await sr.entities.StagedWebsiteChange.update(stage.id, {
       status: 'PR_OPEN',
-      commitSha: commit.sha,
+      commitSha: branchCommitSha,
       pullRequestNumber: pr.number,
       pullRequestUrl: pr.html_url,
       previewStatus: 'PENDING',
@@ -268,12 +334,12 @@ export default async function(req) {
       changeId: stage.changeId, jobId: job.jobId, agentId: 'STAGING_ORCHESTRATOR', eventType: 'IMPLEMENTATION',
       action: `Staging PR created: #${pr.number}`,
       previousState: 'READY_TO_STAGE', newState: 'PR_OPEN',
-      details: `Branch ${stage.stageBranch}; commit ${commit.sha}; ${modified.size} approved file(s). No Base44 production change made.`,
+      details: `Branch ${stage.stageBranch}; commit ${branchCommitSha}; ${modified.size} approved file(s). No Base44 production change made.`,
     });
 
     return Response.json({
       status: 'PR_OPEN', stageId: stage.stageId, changeId: stage.changeId,
-      branch: stage.stageBranch, commitSha: commit.sha, pullRequestNumber: pr.number, pullRequestUrl: pr.html_url,
+      branch: stage.stageBranch, commitSha: branchCommitSha, pullRequestNumber: pr.number, pullRequestUrl: pr.html_url,
       filesChanged: [...modified.keys()], provider: ai.provider, model: ai.model, fallbackUsed: ai.fallbackUsed,
     });
   } catch (error) {
