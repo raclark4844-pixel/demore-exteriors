@@ -32,6 +32,8 @@ export default function DamageCheckForm() {
   const [lead, setLead] = useState({ name: "", phone: "", email: "", address: "", message: "" });
   const [leadSending, setLeadSending] = useState(false);
   const [leadSent, setLeadSent] = useState(false);
+  const [leadReference, setLeadReference] = useState("");
+  const leadSubmittingRef = useRef(false);
   const [leadError, setLeadError] = useState("");
   const fileInputRef = useRef(null);
 
@@ -91,11 +93,12 @@ export default function DamageCheckForm() {
 
   const submitLead = async (e) => {
     e.preventDefault();
-    if (!lead.name.trim() || !lead.phone.trim()) return;
+    if (leadSubmittingRef.current || !lead.name.trim() || !lead.phone.trim()) return;
+    leadSubmittingRef.current = true;
     setLeadSending(true);
     setLeadError("");
     try {
-      await base44.entities.ContactLead.create({
+      const savedLead = await base44.entities.ContactLead.create({
         name: lead.name.trim(),
         phone: lead.phone.trim(),
         email: lead.email.trim(),
@@ -109,10 +112,12 @@ export default function DamageCheckForm() {
           .filter(Boolean)
           .join(" — "),
       });
+      setLeadReference(savedLead.id || "");
       setLeadSent(true);
     } catch {
       setLeadError("We couldn't submit your request. Please call us at (440) 920-6133.");
     } finally {
+      leadSubmittingRef.current = false;
       setLeadSending(false);
     }
   };
@@ -221,13 +226,19 @@ export default function DamageCheckForm() {
         </p>
 
         {leadSent ? (
-          <div className="bg-card border border-border rounded-xl p-6 text-center">
+          <div role="status" className="bg-card border border-border rounded-xl p-6 text-center">
             <CalendarCheck className="w-8 h-8 text-primary mx-auto mb-3" />
-            <p className="font-heading font-bold mb-1">You're on the schedule board!</p>
+            <p className="font-heading font-bold mb-1">Your inspection request is saved</p>
             <p className="text-sm text-muted-foreground mb-4">
-              We received your request and will call you shortly to confirm your free
-              inspection.
+              We’ll contact you to arrange your free inspection. No appointment has
+              been booked yet.
             </p>
+            {leadReference && (
+              <p className="text-sm text-muted-foreground mb-4 break-words">
+                Your reference: <strong className="text-foreground">{leadReference}</strong>.
+                Keep this number so we can find your request.
+              </p>
+            )}
             <a href="tel:4409206133" className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
               <Phone className="w-4 h-4" /> Need it sooner? Call (440) 920-6133
             </a>
@@ -302,7 +313,7 @@ export default function DamageCheckForm() {
               disabled={leadSending || !lead.name.trim() || !lead.phone.trim()}
               className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold h-11"
             >
-              {leadSending ? "Sending…" : "Book My Free Inspection"}
+              {leadSending ? "Sending…" : "Request My Free Inspection"}
             </Button>
             {leadError && <p role="alert" className="text-sm text-destructive text-center">{leadError}</p>}
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
