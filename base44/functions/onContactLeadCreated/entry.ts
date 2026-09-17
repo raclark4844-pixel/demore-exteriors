@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
-import { Resend } from 'npm:resend@4.0.0';
+import { Resend } from 'npm:resend@6.28.1';
 
 const SPREADSHEET_ID = "1TBwiXElXwKjDJbsm6UTi1NZnQk-CvuU4KI1OpHBrWgo";
 const SHEET_NAME = "Leads";
@@ -19,6 +19,7 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const payload = await req.json();
     const lead = payload.data;
+    if (!lead?.id) return Response.json({ error: "Lead ID required" }, { status: 400 });
 
     try {
       const { accessToken } = await base44.asServiceRole.connectors.getConnection("googlesheets");
@@ -41,7 +42,8 @@ Deno.serve(async (req) => {
         lead.lead_source || "website",
         lead.preferred_language || "en",
         lead.message || "",
-        lead.status || "new"
+        lead.status || "new",
+        lead.id
       ];
       await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`, {
         method: "POST",
@@ -61,16 +63,17 @@ Deno.serve(async (req) => {
       .split(",")
       .map((v) => v.trim())
       .filter(Boolean);
-    const recipients = configuredRecipients.length ? configuredRecipients : DEFAULT_RECIPIENTS;
+    const recipients = [...new Set([...DEFAULT_RECIPIENTS, ...configuredRecipients])];
     const sourceLabel = (lead.lead_source || "website").replaceAll("_", " ");
 
-    await resend.emails.send({
+    const ownerEmail = await resend.emails.send({
       from,
       to: recipients,
-      reply_to: lead.email || "ryan@demoreexteriorsolutions.com",
+      replyTo: lead.email || "ryan@demoreexteriorsolutions.com",
       subject: `New ${lead.service_type === "storm_damage" ? "Storm Damage " : ""}Lead from ${lead.name} (${sourceLabel})`,
       html: `
         <h2>New Demore Lead</h2>
+        <p>Lead reference: <strong>${esc(lead.id)}</strong></p>
         <p>A new lead was captured from <strong>${esc(sourceLabel)}</strong>.</p>
         <table style="border-collapse:collapse;width:100%;max-width:760px">
           <tr><td style="padding:6px;font-weight:bold">Name</td><td style="padding:6px">${show(lead.name)}</td></tr>
@@ -87,27 +90,31 @@ Deno.serve(async (req) => {
           <tr><td style="padding:6px;font-weight:bold">Adjuster phone</td><td style="padding:6px">${show(lead.adjuster_phone)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Adjuster email</td><td style="padding:6px">${show(lead.adjuster_email)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Language</td><td style="padding:6px">${show(lead.preferred_language, "en")}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Message</td><td style="padding:6px">${show(lead.message, "None")}</td></tr>
+          <tr><td style="padding:6px;font-weight:bold">Message</td><td style="padding:6px">${show(lead.message, "None").replaceAll("\n", "<br/>")}</td></tr>
         </table>
         <p><a href="https://www.demoreexteriorsolutions.com">Demore Exterior Solutions</a></p>
       `
-    });
+    }, { idempotencyKey: `lead-owner-${lead.id}` });
+    if (ownerEmail.error) throw new Error("Owner email was rejected by provider");
+    if (ownerEmail.data?.id) await base44.asServiceRole.entities.ContactLead.update(lead.id, { owner_notification_id: ownerEmail.data.id });
 
     if (lead.email) {
-      await resend.emails.send({
+      const customerEmail = await resend.emails.send({
         from,
         to: [lead.email],
-        reply_to: "ryan@demoreexteriorsolutions.com",
+        replyTo: "ryan@demoreexteriorsolutions.com",
         subject: "We received your request — Demore Exterior Solutions",
         html: `
           <h2>Thanks, ${esc(lead.name)}!</h2>
-          <p>We've received your request and will be in touch shortly.</p>
+          <p>We've received your request and will be in touch shortly. Your lead reference is <strong>${esc(lead.id)}</strong>.</p>
+          ${lead.lead_source === 'satellite_estimate' ? `<p>${show(lead.message).replaceAll('\n', '<br/>')}</p>` : ''}
           <p>If this is storm damage or an active leak, call <strong>(440) 920-6133</strong> so we can capture the details quickly.</p>
           <br/>
           <p>— Demore Exterior Solutions</p>
           <p style="color:#888;font-size:12px">6348 Meldon Dr, Mentor, OH 44060 | www.demoreexteriorsolutions.com</p>
         `
-      });
+      }, { idempotencyKey: `lead-customer-${lead.id}` });
+      if (customerEmail.error) throw new Error("Customer email was rejected by provider");
     }
 
     return Response.json({ success: true, notified: recipients });

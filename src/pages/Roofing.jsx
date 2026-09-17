@@ -1,3 +1,4 @@
+import InstantEstimateCTA from '@/components/InstantEstimateCTA';
 import React from "react";
 import useSEO from "@/hooks/useSEO";
 import { motion } from "framer-motion";
@@ -431,6 +432,7 @@ export default function Roofing() {
         </div>
       </section>
 
+      <InstantEstimateCTA />
       <Footer />
     </div>
   );

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -51,6 +52,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import AIControl from './pages/AIControl';
 
+const InstantEstimate = lazy(() => import('./pages/InstantEstimate'));
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
@@ -83,6 +86,7 @@ const AuthenticatedApp = () => {
         <Route path="/storm-damage" element={<StormDamage />} />
         <Route path="/financing" element={<Financing />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/instant-estimate" element={<Suspense fallback={<p role="status" className="p-8">Loading estimate form…</p>}><InstantEstimate /></Suspense>} />
         <Route path="/roofing" element={<Roofing />} />
         <Route path="/siding" element={<Siding />} />
         <Route path="/windows" element={<Windows />} />

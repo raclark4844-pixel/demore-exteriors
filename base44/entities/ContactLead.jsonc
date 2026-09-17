@@ -35,7 +35,11 @@
     },
     "insurance_claim_filed": {
       "type": "string",
-      "enum": ["yes", "no", "not_sure"],
+      "enum": [
+        "yes",
+        "no",
+        "not_sure"
+      ],
       "description": "Whether an insurance claim has already been filed"
     },
     "claim_carrier": {
@@ -64,13 +68,24 @@
     },
     "preferred_language": {
       "type": "string",
-      "enum": ["en", "es"],
+      "enum": [
+        "en",
+        "es"
+      ],
       "default": "en",
       "description": "Preferred intake language"
     },
     "lead_source": {
       "type": "string",
-      "enum": ["website", "chat", "ai_phone", "damage_check", "satellite_estimate", "storm_event", "other"],
+      "enum": [
+        "website",
+        "chat",
+        "ai_phone",
+        "damage_check",
+        "satellite_estimate",
+        "storm_event",
+        "other"
+      ],
       "default": "website",
       "description": "Source that created the lead"
     },
@@ -106,6 +121,23 @@
       ],
       "default": "new",
       "description": "Lead status"
+    },
+    "estimate_request_id": {
+      "type": "string",
+      "description": "Random submission token used to recover an estimate after a retry."
+    },
+    "estimate_data": {
+      "type": "object",
+      "description": "Server-calculated preliminary estimate, measurement source, assumptions, and version. Not a bid."
+    },
+    "contact_consent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Consent to contact about the estimate."
+    },
+    "owner_notification_id": {
+      "type": "string",
+      "description": "Email provider acceptance ID for the owner notification."
     }
   },
   "required": [

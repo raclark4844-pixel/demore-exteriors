@@ -1,3 +1,4 @@
+import InstantEstimateCTA from '@/components/InstantEstimateCTA';
 import React from "react";
 import useSEO from "@/hooks/useSEO";
 import Navbar from "../components/Navbar";
@@ -58,6 +59,7 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <HomeTrustBar />
+      <InstantEstimateCTA />
       <ServicesSection />
       <StormDamageSection />
       <DamageCheckSection />
