@@ -1,0 +1,84 @@
+{
+  "name": "ProjectOutcome",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "city_slug": {
+      "type": "string"
+    },
+    "city_name": {
+      "type": "string"
+    },
+    "service": {
+      "type": "string"
+    },
+    "before_url": {
+      "type": "string"
+    },
+    "after_url": {
+      "type": "string"
+    },
+    "initial_amount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "final_amount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "summary": {
+      "type": "string"
+    },
+    "consent_confirmed": {
+      "type": "boolean",
+      "default": false
+    },
+    "amounts_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "title",
+    "city_slug"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.status": "published"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

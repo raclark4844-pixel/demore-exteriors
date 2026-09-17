@@ -1,8 +1,11 @@
+import { WEBSITE_FEATURES } from "./websiteFeatures.ts";
 // Demore Exterior Solutions knowledge base for the Grok chat assistants.
 // Keep this in sync with src/lib/manufacturerData.js, src/lib/serviceAreaData.js,
 // and the Services / Insurance Claims pages.
 
 export const KNOWLEDGE = `
+${WEBSITE_FEATURES}
+
 ## COMPANY
 Demore Exterior Solutions — exterior contractor based in Mentor, Ohio (Lake County). Licensed & insured general contractor.
 Phone: (440) 920-6133 · Email: ryan@demoreexteriorsolutions.com · Office: 6348 Meldon Dr, Mentor, OH 44060.
@@ -47,12 +50,8 @@ Gentek / Associated Materials:
 - Installations follow manufacturer specifications exactly so manufacturer warranties remain valid (nailing patterns, underlayment, ventilation, ice & water shield).
 - Northeast Ohio climate considerations: lake-effect snow, hail, and freeze-thaw cycles — proper ventilation, ice & water shield at eaves, and wind-rated shingles are standard practice.
 
-## INSURANCE CLAIMS PROCESS (4 STEPS)
-1. File Your Claim: we represent you and assist in obtaining your insurance company's approval for restoration funds. If the claim is denied, you owe nothing.
-2. Initial ACV Payment: you receive the initial check with the detailed work scope. We help select options, order materials, and schedule the work.
-3. Professional Installation: our crew completes all repairs per the insurance work scope; inspections are ordered during and after restoration.
-4. Final Settlement: after final inspection, the insurance company releases the depreciation check; any supplements for unforeseen costs are negotiated by us.
-Zero-Risk Contingency Agreement: if the insurance company does not agree to pay for needed repairs, the agreement automatically terminates and the customer owes nothing. A contingency agreement PDF is available on the website.
+## INSURANCE CLAIMS PROCESS
+Demore is the contractor: inspection, photos, construction scope, repair and replacement. The insurer decides coverage and payment under the policy. Do not promise coverage, specific claim amounts, or that a homeowner only owes a deductible. Refer to /insurance-claims/help for education and the actual written agreement for contract terms. An inspection request is not a confirmed appointment unless the scheduling system confirms it.
 
 ## SERVICE AREA (8 counties in Northeast Ohio)
 - Cuyahoga County: Bay Village, Beachwood, Bedford, Bedford Heights, Berea, Broadview Heights, Brooklyn, Brook Park, Cleveland, Cleveland Heights, East Cleveland, Euclid, Fairview Park, Garfield Heights, Highland Heights, Independence, Lakewood, Lyndhurst, Maple Heights, Mayfield Heights, Middleburg Heights, North Olmsted, North Royalton, Olmsted Falls, Parma, Parma Heights, Pepper Pike, Richmond Heights, Rocky River, Seven Hills, Shaker Heights, Solon, South Euclid, Strongsville, University Heights, Warrensville Heights, Westlake, North Ridgeville, Avon, Avon Lake, Sheffield Lake, Vermilion; villages incl. Bratenahl, Brooklyn Heights, Chagrin Falls, Gates Mills, Glenwillow, Highland Hills, Hunting Valley, Linndale, Mayfield, Moreland Hills, Newburgh Heights, North Randall, Orange, Valley View, Walton Hills, Woodmere; also White Oak, Pleasant Valley, Columbia Station.

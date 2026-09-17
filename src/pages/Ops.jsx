@@ -92,6 +92,7 @@ export default function Ops() {
 
         <div className="flex flex-wrap items-center gap-2 mb-8">
           <span className="text-sm font-heading font-bold text-muted-foreground">Internal tools:</span>
+          <Link to="/ops/growth" className="text-primary underline">Reviews, storms & project proof</Link>
           <Link to="/market-research">
             <Button variant="outline" size="sm">Market Research</Button>
           </Link>

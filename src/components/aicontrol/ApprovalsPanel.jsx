@@ -56,13 +56,19 @@ export default function ApprovalsPanel() {
       key: "actions",
       label: "Decision",
       className: "max-w-none",
-      render: (r) =>
-        r.status === "PENDING" ? (
+      render: (r) => {
+        if (r.status !== "PENDING") return "—";
+        const secureHumanGate = r.approvalType === "OWNER" && ["HIGH", "RED"].includes(r.riskLevel);
+        if (secureHumanGate) {
+          return <span className="text-xs text-muted-foreground">Secure email approval required · 1 of 2 humans</span>;
+        }
+        return (
           <div className="flex gap-1">
             <Button size="sm" onClick={() => decide(r, "APPROVED")} disabled={busyId === r.id}>Approve</Button>
             <Button size="sm" variant="destructive" onClick={() => decide(r, "REJECTED")} disabled={busyId === r.id}>Reject</Button>
           </div>
-        ) : "—",
+        );
+      },
     },
   ];
 

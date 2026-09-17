@@ -5,6 +5,7 @@ import { Phone, ChevronRight, MapPin, Home, Hammer, Droplets, CloudLightning, Ar
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CitySourceDetail from "@/components/CitySourceDetail";
 import useSEO from "@/hooks/useSEO";
 import { isCitySeoIndexable } from "@/lib/citySeoIndex";
 
@@ -225,6 +226,7 @@ export default function MentorCityPage() {
         </div>
       </section>
 
+      <CitySourceDetail citySlug="mentor" />
       <Footer />
     </div>
   );

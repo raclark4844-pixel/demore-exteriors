@@ -107,7 +107,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 mb-10"
+            className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-10"
           >
             <a href="tel:+14409206133">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold text-base px-8 h-14 min-w-[220px]">
@@ -115,13 +115,18 @@ export default function HeroSection() {
                 Call (440) 920-6133
               </Button>
             </a>
-            <a href="#contact">
-              <Button size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 font-heading font-bold text-base px-8 h-14 min-w-[180px]">
+            <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 font-heading font-bold text-base px-8 h-14 min-w-[180px]">
+              <a href="#contact" data-lead-cta="direct">
                 Request a Free Inspection
                 <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </a>
-            <Link to="/storm-damage" className="sm:self-center text-sm font-heading font-bold text-primary hover:underline">Storm damage help →</Link>
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 font-heading font-bold text-base px-8 h-14 min-w-[180px]">
+              <Link to="/storm-damage">
+                Storm damage help
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </Button>
           </motion.div>
 
           <motion.p

@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import ServiceAreaDropdown from "@/components/ServiceAreaDropdown";
 import ProductsDropdown from "@/components/ProductsDropdown";
 import ServicesDropdown from "@/components/ServicesDropdown";
-import { openAssistant } from "@/lib/openAssistant";
-import MobileQuickActions from "@/components/MobileQuickActions";
 
 const LOGO_URL = "https://media.base44.com/images/public/user_6a22dc88783b484dd6ef2b08/899ea39b7_Demorelogo.jpg";
 
@@ -77,14 +75,12 @@ export default function Navbar() {
               (440) 920-6133
             </a>
             <Button
-              onClick={() => openAssistant()}
+              asChild
               className="bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold text-sm"
             >
-              Free Estimate
+              <Link to="/instant-estimate" data-lead-cta="direct">Free Estimate</Link>
             </Button>
           </div>
-
-          <MobileQuickActions />
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -142,11 +138,9 @@ export default function Navbar() {
                   <Phone className="w-4 h-4" />
                   (440) 920-6133
                 </a>
-                <a href="#contact" onClick={(e) => { e.preventDefault(); setMenuOpen(false); openAssistant(); }}>
-                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold">
-                    Free Estimate
-                  </Button>
-                </a>
+                <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold">
+                  <Link to="/instant-estimate" data-lead-cta="direct" onClick={() => setMenuOpen(false)}>Free Estimate</Link>
+                </Button>
               </div>
             </div>
           </motion.div>

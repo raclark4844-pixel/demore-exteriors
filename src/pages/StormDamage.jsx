@@ -130,9 +130,7 @@ export default function StormDamage() {
               <a href="tel:+14409206133">
                 <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold h-14 px-7"><Phone className="w-5 h-5 mr-2" /> Call Now</Button>
               </a>
-              <button onClick={() => openAssistant("I need help after a storm and want to schedule an inspection") }>
-                <Button size="lg" variant="outline" className="h-14 px-7 font-heading font-bold"><MessageCircle className="w-5 h-5 mr-2" /> Ask Demore</Button>
-              </button>
+              <Button onClick={() => openAssistant("I need help after a storm and want to schedule an inspection")} size="lg" variant="outline" className="h-14 px-7 font-heading font-bold"><MessageCircle className="w-5 h-5 mr-2" /> Ask Demore</Button>
               <Link to="/damage-assessment">
                 <Button size="lg" variant="outline" className="h-14 px-7 font-heading font-bold"><Camera className="w-5 h-5 mr-2" /> Free AI Damage Check</Button>
               </Link>
@@ -224,7 +222,7 @@ export default function StormDamage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-heading font-bold">Storm damage questions, answered directly</h2>
-            <p className="text-muted-foreground mt-3">Short answers for homeowners — and structured so search and AI answer engines can understand them clearly.</p>
+            <p className="text-muted-foreground mt-3">Clear answers to common questions about storm inspections and repairs.</p>
           </div>
           <div className="space-y-4">
             {faqs.map((item) => (

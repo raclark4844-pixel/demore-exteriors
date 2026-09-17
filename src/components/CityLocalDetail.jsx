@@ -14,7 +14,7 @@ export default function CityLocalDetail({ cityName, data }) {
           Local Insight: Working in {cityName}
         </h2>
         <p className="text-muted-foreground text-sm mb-10">
-          Weather, neighborhoods, and permit notes from jobs we've actually run in {cityName}.
+          Weather, neighborhoods, and exterior project planning in {cityName}.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">

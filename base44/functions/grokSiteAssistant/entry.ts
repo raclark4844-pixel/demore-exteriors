@@ -1,3 +1,4 @@
+import { WEBSITE_FEATURES } from "../../shared/websiteFeatures.ts";
 import { secrets } from "base44:runtime";
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.31";
 import { Resend } from "npm:resend@4.0.0";
@@ -9,7 +10,7 @@ const MAX_MESSAGES = 20;
 const MAX_REQUESTS_PER_HOUR = 60;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const USER_TEXT_LOG_CHARS = 120;
-const LEAD_EMAIL_TO = "ryan@demoreexteriorsolutions.com";
+const LEAD_EMAIL_TO = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
 const LEAD_EMAIL_FROM = "Demore Exterior Solutions <no-reply@demorehomesolutions.com>";
 
 const PRIORITIES = ["urgent_leak", "adjuster_on_site", "hot_insurance", "standard", "after_hours_faq", "existing_message"];
@@ -198,7 +199,7 @@ function buildLeadEmail(record, pageUrl, timestamp, messages) {
     ["Intent", record.intent],
     ["Priority", record.priority],
     ["Notes", record.notes || "None"],
-    ["Channels", Array.isArray(record.channelTrail) ? record.channelTrail.join(", ") : ""]
+    ["Channels", Array.isArray(record.channelTrail) ? [...new Set(record.channelTrail.map(x => x.endsWith("call") ? "call" : "chat"))].join(", ") : ""]
   ]
     .map(
       ([label, value]) =>
@@ -307,7 +308,7 @@ export default async function(req) {
         model: MODEL,
         temperature: 0.3,
         messages: [
-          { role: "system", content: SYSTEM_PROMPT + (channel === "call" ? CALL_NOTE : "") },
+          { role: "system", content: SYSTEM_PROMPT + "\n\n" + WEBSITE_FEATURES + "\nCapture all inquiries and messages for Ryan and Clark, not just appointments. Do not claim email delivery unless the notification succeeds." + (channel === "call" ? CALL_NOTE : "") },
           ...messages
         ]
       })
@@ -337,20 +338,28 @@ export default async function(req) {
         leadSaved = true;
         priority = result.record.priority;
         intent = result.record.intent;
-        if (result.created && result.record.phone) {
+        if (result.record.phone || result.record.email || result.record.fullName !== "Unknown" || result.record.notes) {
           try {
             const resend = new Resend(secrets.get("RESEND_API_KEY"));
-            const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-            await resend.emails.send({
+            const timestamp = result.record.created_date || "See conversation record";
+            const html = buildLeadEmail(result.record, pageUrl, timestamp, messages);
+            const hashBytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(html));
+            const fingerprint = Array.from(new Uint8Array(hashBytes), b => b.toString(16).padStart(2, "0")).join("");
+            if (result.record.owner_notification_fingerprint !== fingerprint) {
+            const delivery = await resend.emails.send({
               from: LEAD_EMAIL_FROM,
-              to: [LEAD_EMAIL_TO],
-              reply_to: result.record.email || undefined,
+              to: LEAD_EMAIL_TO,
+              replyTo: result.record.email || undefined,
               subject: `New receptionist lead — ${result.record.priority} — ${result.record.city || "unknown city"}`,
-              html: buildLeadEmail(result.record, pageUrl, timestamp, messages)
-            });
+              html
+            }, { idempotencyKey: `receptionist-${result.record.id}-${fingerprint}` });
+            if (delivery.error || !delivery.data?.id) throw new Error("Owner email was not accepted by the provider");
+            await base44.asServiceRole.entities.Lead.update(result.record.id, { owner_notification_id: delivery.data.id, owner_notification_fingerprint: fingerprint, owner_notification_status: "sent" });
+            }
             emailSent = true;
           } catch (emailError) {
             console.error("Lead email failed:", emailError.message);
+            await base44.asServiceRole.entities.Lead.update(result.record.id, { owner_notification_status: "failed" }).catch(() => {});
           }
         }
       } catch (dbError) {
