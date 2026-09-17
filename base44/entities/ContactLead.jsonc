@@ -74,6 +74,19 @@
       "default": "website",
       "description": "Source that created the lead"
     },
+    "active_leak": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the caller reports water actively entering the property"
+    },
+    "call_summary": {
+      "type": "string",
+      "description": "Short AI phone-agent summary of the call"
+    },
+    "transcript_url": {
+      "type": "string",
+      "description": "Transcript URL or transcript reference from the phone provider"
+    },
     "message": {
       "type": "string",
       "description": "Additional details or message"
