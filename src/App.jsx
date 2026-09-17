@@ -15,6 +15,8 @@ import ScrollToTop from './components/ScrollToTop';
 import GlobalAssistantLauncher from './components/GlobalAssistantLauncher';
 import Home from './pages/Home';
 import InsuranceClaims from './pages/InsuranceClaims';
+import InsuranceHelp from './pages/InsuranceHelp';
+import InsuranceHelpTopic from './pages/InsuranceHelpTopic';
 import Services from './pages/Services';
 import Roofing from './pages/Roofing';
 import Siding from './pages/Siding';
@@ -76,6 +78,8 @@ const AuthenticatedApp = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/insurance-claims" element={<InsuranceClaims />} />
+        <Route path="/insurance-claims/help" element={<InsuranceHelp />} />
+        <Route path="/insurance-claims/help/:topic" element={<InsuranceHelpTopic />} />
         <Route path="/storm-damage" element={<StormDamage />} />
         <Route path="/financing" element={<Financing />} />
         <Route path="/services" element={<Services />} />
