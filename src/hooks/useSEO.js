@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ALL_MANUFACTURERS, ALL_PRODUCTS, ALL_COUNTIES, ALL_CITIES, FULL_SERVICE_AREA, MANUFACTURER_CATEGORIES } from "@/lib/seoData";
 
-const SITE_URL = "https://www.demoreexteriorsolutions.com";
+const SITE_URL = "https://demoreexteriorsolutions.com";
 const DEFAULT_OG_IMAGE = "https://media.base44.com/images/public/user_6a22dc88783b484dd6ef2b08/899ea39b7_Demorelogo.jpg";
 const BUSINESS_NAME = "Demore Exterior Solutions";
 const PHONE = "+1-440-920-6133";

@@ -109,7 +109,7 @@ export default function CommercialCityPage() {
       link.setAttribute('rel', 'canonical');
       document.head.appendChild(link);
     }
-    link.setAttribute('href', `https://www.demoreexteriorsolutions.com/service-area/${county}/${city}/commercial`);
+    link.setAttribute('href', `https://demoreexteriorsolutions.com/service-area/${county}/${city}/commercial`);
 
     // All city-commercial routes are noindex,follow (approved SEO batch A/C).
     // No commercial city route is approved for indexation — this is independent

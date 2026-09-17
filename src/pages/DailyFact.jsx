@@ -21,15 +21,19 @@ function getRelatedImage(title, type) {
 }
 
 export default function DailyFact() {
-    const { date } = useParams();
+    const { date = "today" } = useParams();
 
     useSEO({
         description:
             "Today's fun historical fact from the world of homes and construction, shared by Demore Exterior Solutions — your Mentor, OH exterior contractor.",
         canonical: `/daily-fact/${date}`,
     });
-    const targetDate = date === "today" ? 
-        new Date().toLocaleDateString("en-US", { timeZone: "America/New_York" }).split('/').reverse().join('-').split('-').map((p, i) => i === 0 ? p : p.padStart(2, '0')).join('-') 
+    const dateParts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit"
+    }).formatToParts(new Date());
+    const datePart = (type) => dateParts.find((part) => part.type === type)?.value;
+    const targetDate = date === "today"
+        ? `${datePart("year")}-${datePart("month")}-${datePart("day")}`
         : date;
 
     const { data: fact, isLoading, error } = useQuery({
