@@ -58,7 +58,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                <div><a href="tel:4409206133" className="hover:text-primary transition-colors">(440) 920-6133</a><div className="text-xs mt-0.5">Call line answered 24/7</div></div>
+                <div><a href="tel:4409206133" className="hover:text-primary transition-colors">(440) 920-6133</a><div className="text-xs mt-0.5">Office hours Mon–Sat, 7AM–7PM</div></div>
               </li>
               <li className="flex items-start gap-2"><MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span>6348 Meldon Dr, Mentor, OH 44060</span></li>
               <li className="flex items-start gap-2"><Mail className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><a href="mailto:ryan@demoreexteriorsolutions.com" className="hover:text-primary transition-colors">ryan@demoreexteriorsolutions.com</a></li>
