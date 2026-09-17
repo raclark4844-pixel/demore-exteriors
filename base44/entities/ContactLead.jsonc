@@ -25,10 +25,54 @@
         "siding",
         "gutters",
         "storm_damage",
+        "windows",
+        "doors",
+        "decks",
         "multiple",
         "other"
       ],
       "description": "Type of service requested"
+    },
+    "insurance_claim_filed": {
+      "type": "string",
+      "enum": ["yes", "no", "not_sure"],
+      "description": "Whether an insurance claim has already been filed"
+    },
+    "claim_carrier": {
+      "type": "string",
+      "description": "Insurance carrier, when provided"
+    },
+    "claim_number": {
+      "type": "string",
+      "description": "Insurance claim number, when provided"
+    },
+    "date_of_loss": {
+      "type": "string",
+      "description": "Reported date of loss or storm date"
+    },
+    "adjuster_name": {
+      "type": "string",
+      "description": "Adjuster name, when provided"
+    },
+    "adjuster_phone": {
+      "type": "string",
+      "description": "Adjuster phone, when provided"
+    },
+    "adjuster_email": {
+      "type": "string",
+      "description": "Adjuster email, when provided"
+    },
+    "preferred_language": {
+      "type": "string",
+      "enum": ["en", "es"],
+      "default": "en",
+      "description": "Preferred intake language"
+    },
+    "lead_source": {
+      "type": "string",
+      "enum": ["website", "chat", "ai_phone", "damage_check", "satellite_estimate", "storm_event", "other"],
+      "default": "website",
+      "description": "Source that created the lead"
     },
     "message": {
       "type": "string",
