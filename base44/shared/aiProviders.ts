@@ -1,3 +1,4 @@
+import { WEBSITE_FEATURES } from "./websiteFeatures.ts";
 /**
  * Provider-neutral AI adapter layer for the Demore multi-agent system.
  * Keys are server-side only (base44:runtime secrets) and never reach the browser.
@@ -293,7 +294,7 @@ export async function callAI(sr, opts) {
   const role = rows[0];
   const primaryProvider = (role && role.provider) || "BASE44";
   const primaryModel = (role && role.model) || "automatic";
-  const systemPrompt = (role && role.systemPrompt) || GENERIC_PROMPT;
+  const systemPrompt = ((role && role.systemPrompt) || GENERIC_PROMPT) + "\n\nCURRENT WEBSITE CONTEXT:\n" + WEBSITE_FEATURES;
   const chain = [primaryProvider];
   if (role && role.fallbackProvider && role.fallbackProvider !== primaryProvider) {
     chain.push(role.fallbackProvider);

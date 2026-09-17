@@ -89,6 +89,19 @@
       "type": "string",
       "format": "date-time",
       "description": "Last conversation activity"
+    },
+    "owner_notification_id": {
+      "type": "string"
+    },
+    "owner_notification_fingerprint": {
+      "type": "string"
+    },
+    "owner_notification_status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "failed"
+      ]
     }
   },
   "required": [
