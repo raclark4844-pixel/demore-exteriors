@@ -8,3 +8,4 @@ Disallow: /forgot-password
 Disallow: /market-research
 
 Sitemap: https://www.demoreexteriorsolutions.com/sitemap.xml
+Sitemap: https://www.demoreexteriorsolutions.com/sitemap-additions.xml
