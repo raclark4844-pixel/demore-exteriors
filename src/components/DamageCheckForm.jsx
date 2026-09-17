@@ -1,4 +1,4 @@
-import React, { useId, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { base44 } from "@/api/base44Client";
@@ -11,6 +11,19 @@ const MAX_PHOTOS = 3;
 
 export default function DamageCheckForm() {
   const formId = useId();
+  const inspectionRef = useRef(null);
+  const [inspectionVisible, setInspectionVisible] = useState(false);
+
+  useEffect(() => {
+    const element = inspectionRef.current;
+    if (!element || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInspectionVisible(entry.isIntersecting),
+      { rootMargin: "-64px 0px -80px 0px" }
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
   const [photos, setPhotos] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -106,6 +119,14 @@ export default function DamageCheckForm() {
 
   return (
     <div className="grid lg:grid-cols-2 gap-8 items-start">
+      <style>{`
+        @media (max-width: 767px) {
+          body:has([data-demore-inspection-visible="true"]) > iframe[title="Ask Demore"] {
+            visibility: hidden !important;
+            pointer-events: none !important;
+          }
+        }
+      `}</style>
       {/* Upload + assessment */}
       <div className="space-y-5">
         <div
@@ -188,7 +209,7 @@ export default function DamageCheckForm() {
       </div>
 
       {/* CTA + lead capture */}
-      <div className="bg-primary/10 border border-primary/30 rounded-2xl p-6 sm:p-8">
+      <div ref={inspectionRef} data-demore-inspection-visible={inspectionVisible} className="bg-primary/10 border border-primary/30 rounded-2xl p-6 sm:p-8">
         <ShieldCheck className="w-8 h-8 text-primary mb-3" />
         <h3 className="font-heading font-bold text-xl sm:text-2xl mb-2">
           Claim Your FREE Inspection
