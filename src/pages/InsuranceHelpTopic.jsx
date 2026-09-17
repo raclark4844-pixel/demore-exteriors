@@ -116,7 +116,10 @@ export default function InsuranceHelpTopic() {
   const { topic } = useParams();
   const item = TOPICS[topic];
   if (!item) return <Navigate to="/insurance-claims/help" replace />;
+  return <ClaimTopicContent item={item} topic={topic} />;
+}
 
+function ClaimTopicContent({ item, topic }) {
   const canonical = `/insurance-claims/help/${topic}`;
   useSEO({
     title: `${item.title} | Ohio Homeowners | Demore Exterior Solutions`,

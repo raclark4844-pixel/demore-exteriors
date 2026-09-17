@@ -23,17 +23,25 @@ export default function ContactSection({ mode = "estimate" }) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [areaTab, setAreaTab] = useState("Residential");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
     setSubmitting(true);
-    await base44.entities.ContactLead.create({
-      ...form,
-      ...(inspectionMode ? { description: "Website inspection request" } : {}),
-    });
-    setSubmitting(false);
-    setSubmitted(true);
+    setSubmitError("");
+    try {
+      await base44.entities.ContactLead.create({
+        ...form,
+        ...(inspectionMode ? { description: "Website inspection request" } : {}),
+      });
+      setSubmitted(true);
+    } catch {
+      setSubmitError("We couldn't submit your request. Please try again or call (440) 920-6133.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -132,9 +140,9 @@ export default function ContactSection({ mode = "estimate" }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Insurance claim already filed?</Label>
+                  <Label htmlFor="insurance-claim" className="text-sm font-medium">Insurance claim already filed?</Label>
                   <Select value={form.insurance_claim_filed} onValueChange={(v) => setForm({ ...form, insurance_claim_filed: v })}>
-                    <SelectTrigger className="bg-secondary/50 border-border/50"><SelectValue /></SelectTrigger>
+                    <SelectTrigger id="insurance-claim" className="bg-secondary/50 border-border/50"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="yes">Yes</SelectItem>
                       <SelectItem value="no">No</SelectItem>
@@ -148,6 +156,7 @@ export default function ContactSection({ mode = "estimate" }) {
                   <Textarea id="message" rows={4} placeholder="Describe your project, storm date, active leak, or damage..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="bg-secondary/50 border-border/50 resize-none" />
                 </div>
 
+                {submitError && <p role="alert" className="text-red-600">{submitError}</p>}
                 <Button type="submit" disabled={submitting} size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-heading font-bold text-base h-14">
                   {submitting ? "Submitting..." : inspectionMode ? "Request a Free Inspection" : "Request Free Estimate"}
                   <Send className="w-5 h-5 ml-2" />

@@ -72,9 +72,7 @@ export default function Financing() {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold leading-tight">Flexible ways to move your <span className="text-primary">exterior project forward</span></h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mt-6">Demore Exterior Solutions offers financing options through Acorn and Synchrony for qualified customers working on roofing, siding, gutters, windows, doors, decks and other exterior improvements.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 mt-8">
-            <button onClick={() => openAssistant("I want to learn about financing options for my exterior project") }>
-              <Button size="lg" className="h-14 px-7 font-heading font-bold"><MessageCircle className="w-5 h-5 mr-2" /> Ask About Financing</Button>
-            </button>
+            <Button onClick={() => openAssistant("I want to learn about financing options for my exterior project")} size="lg" className="h-14 px-7 font-heading font-bold"><MessageCircle className="w-5 h-5 mr-2" /> Ask About Financing</Button>
             <a href="tel:+14409206133"><Button size="lg" variant="outline" className="h-14 px-7 font-heading font-bold"><Phone className="w-5 h-5 mr-2" /> (440) 920-6133</Button></a>
           </div>
         </div>
@@ -121,7 +119,7 @@ export default function Financing() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <button onClick={() => openAssistant("I'd like to discuss financing and schedule a free estimate") }><Button className="font-heading font-bold">Start with a Free Estimate <ArrowRight className="w-4 h-4 ml-2" /></Button></button>
+            <Button onClick={() => openAssistant("I'd like to discuss financing and schedule a free estimate")} className="font-heading font-bold">Start with a Free Estimate <ArrowRight className="w-4 h-4 ml-2" /></Button>
           </div>
         </div>
       </section>
