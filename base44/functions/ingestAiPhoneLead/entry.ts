@@ -3,7 +3,7 @@ import {
   buildPhoneLeadPayload,
   toContactLeadRecord,
   validateRequiredIntake,
-} from "../../shared/phoneAgent.ts";
+} from "./phoneAgent.ts";
 
 export default async function(req) {
   try {
