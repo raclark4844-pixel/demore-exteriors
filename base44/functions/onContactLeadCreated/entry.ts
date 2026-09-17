@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
         html: `
           <h2>Thanks, ${esc(lead.name)}!</h2>
           <p>We've received your request and will be in touch shortly.</p>
-          <p>If this is storm damage or an active leak, call <strong>(440) 920-6133</strong>. Our call line is answered 24/7 for intake.</p>
+          <p>If this is storm damage or an active leak, call <strong>(440) 920-6133</strong> so we can capture the details quickly.</p>
           <br/>
           <p>— Demore Exterior Solutions</p>
           <p style="color:#888;font-size:12px">6348 Meldon Dr, Mentor, OH 44060 | www.demoreexteriorsolutions.com</p>
