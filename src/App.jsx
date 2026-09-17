@@ -12,6 +12,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
+import GlobalAssistantLauncher from './components/GlobalAssistantLauncher';
 import Home from './pages/Home';
 import InsuranceClaims from './pages/InsuranceClaims';
 import Services from './pages/Services';
@@ -22,6 +23,8 @@ import Doors from './pages/Doors';
 import Gutters from './pages/Gutters';
 import ServiceAreas from './pages/ServiceAreas';
 import Decks from './pages/Decks';
+import StormDamage from './pages/StormDamage';
+import Financing from './pages/Financing';
 import CountyPage from './pages/CountyPage';
 import CityPage from './pages/CityPage';
 import MentorCityPage from './pages/MentorCityPage';
@@ -45,12 +48,10 @@ import ServiceCounties from './pages/ServiceCounties';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import AIControl from './pages/AIControl';
-// Add page imports here
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -59,77 +60,77 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/insurance-claims" element={<InsuranceClaims />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/roofing" element={<Roofing />} />
-      <Route path="/siding" element={<Siding />} />
-      <Route path="/windows" element={<Windows />} />
-      <Route path="/doors" element={<Doors />} />
-      <Route path="/gutters" element={<Gutters />} />
-      <Route path="/service-areas" element={<ServiceAreas />} />
-      <Route path="/decks" element={<Decks />} />
-      <Route path="/service-area/:county" element={<CountyPage />} />
-      <Route path="/service-area/lake/mentor" element={<MentorCityPage />} />
-      <Route path="/service-area/lake/willoughby" element={<LakeCityPage />} />
-      <Route path="/service-area/lake/painesville" element={<LakeCityPage />} />
-      <Route path="/service-area/lake/eastlake" element={<LakeCityPage />} />
-      <Route path="/service-area/lake/kirtland" element={<LakeCityPage />} />
-      <Route path="/service-area/lake/concord-township" element={<LakeCityPage />} />
-      <Route path="/service-area/lake/mentor-on-the-lake" element={<LakeCityPage />} />
-      <Route path="/service-area/lake/madison" element={<LakeCityPage />} />
-      <Route path="/service-area/geauga/chardon" element={<LakeCityPage />} />
-      <Route path="/service-area/:county/:city" element={<CityPage />} />
-      <Route path="/service-area/:county/:city/commercial" element={<CommercialCityPage />} />
-      <Route path="/services/commercial" element={<CommercialServices />} />
-      <Route path="/products/:manufacturer" element={<ManufacturerPage />} />
-      <Route path="/products/:manufacturer/:category/:product" element={<ProductPage />} />
-      <Route path="/daily-fact/today" element={<DailyFact />} />
-      <Route path="/daily-fact/:date" element={<DailyFact />} />
-      <Route path="/daily-facts" element={<DailyFactsIndex />} />
-      <Route path="/reviews" element={<Reviews />} />
-      <Route path="/gallery" element={<Gallery />} />
-      <Route path="/damage-assessment" element={<DamageAssessment />} />
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/insurance-claims" element={<InsuranceClaims />} />
+        <Route path="/storm-damage" element={<StormDamage />} />
+        <Route path="/financing" element={<Financing />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/roofing" element={<Roofing />} />
+        <Route path="/siding" element={<Siding />} />
+        <Route path="/windows" element={<Windows />} />
+        <Route path="/doors" element={<Doors />} />
+        <Route path="/gutters" element={<Gutters />} />
+        <Route path="/service-areas" element={<ServiceAreas />} />
+        <Route path="/decks" element={<Decks />} />
+        <Route path="/service-area/:county" element={<CountyPage />} />
+        <Route path="/service-area/lake/mentor" element={<MentorCityPage />} />
+        <Route path="/service-area/lake/willoughby" element={<LakeCityPage />} />
+        <Route path="/service-area/lake/painesville" element={<LakeCityPage />} />
+        <Route path="/service-area/lake/eastlake" element={<LakeCityPage />} />
+        <Route path="/service-area/lake/kirtland" element={<LakeCityPage />} />
+        <Route path="/service-area/lake/concord-township" element={<LakeCityPage />} />
+        <Route path="/service-area/lake/mentor-on-the-lake" element={<LakeCityPage />} />
+        <Route path="/service-area/lake/madison" element={<LakeCityPage />} />
+        <Route path="/service-area/geauga/chardon" element={<LakeCityPage />} />
+        <Route path="/service-area/:county/:city" element={<CityPage />} />
+        <Route path="/service-area/:county/:city/commercial" element={<CommercialCityPage />} />
+        <Route path="/services/commercial" element={<CommercialServices />} />
+        <Route path="/products/:manufacturer" element={<ManufacturerPage />} />
+        <Route path="/products/:manufacturer/:category/:product" element={<ProductPage />} />
+        <Route path="/daily-fact/today" element={<DailyFact />} />
+        <Route path="/daily-fact/:date" element={<DailyFact />} />
+        <Route path="/daily-facts" element={<DailyFactsIndex />} />
+        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/damage-assessment" element={<DamageAssessment />} />
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        <Route path="/ops" element={<Ops />} />
-        <Route path="/ops/ai-control" element={<AIControl />} />
-        <Route path="/products" element={<ProductsIndex />} />
-        <Route path="/market-research" element={<MarketResearch />} />
-        <Route path="/market-research/competitors" element={<Competitors />} />
-        <Route path="/market-research/supply-houses" element={<SupplyHouses />} />
-        <Route path="/market-research/seo-targets" element={<SEOTargets />} />
-        <Route path="/market-research/seo-summary" element={<SEOSummary />} />
-        <Route path="/market-research/counties" element={<ServiceCounties />} />
-      </Route>
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+          <Route path="/ops" element={<Ops />} />
+          <Route path="/ops/ai-control" element={<AIControl />} />
+          <Route path="/products" element={<ProductsIndex />} />
+          <Route path="/market-research" element={<MarketResearch />} />
+          <Route path="/market-research/competitors" element={<Competitors />} />
+          <Route path="/market-research/supply-houses" element={<SupplyHouses />} />
+          <Route path="/market-research/seo-targets" element={<SEOTargets />} />
+          <Route path="/market-research/seo-summary" element={<SEOSummary />} />
+          <Route path="/market-research/counties" element={<ServiceCounties />} />
+        </Route>
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+      <GlobalAssistantLauncher />
+    </>
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
