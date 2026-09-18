@@ -1,0 +1,64 @@
+{
+  "name": "KnowledgeRefresh",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Visible knowledge pack version, e.g. 2026.09.18.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "partial",
+        "failed"
+      ]
+    },
+    "source_origin": {
+      "type": "string",
+      "default": "https://www.demoreexteriorsolutions.com"
+    },
+    "pages_ok": {
+      "type": "number"
+    },
+    "pages_failed": {
+      "type": "number"
+    },
+    "failed_paths": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "last_success_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "version",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

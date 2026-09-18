@@ -138,6 +138,20 @@
     "owner_notification_id": {
       "type": "string",
       "description": "Email provider acceptance ID for the owner notification."
+    },
+    "external_intake_ref": {
+      "type": "string",
+      "description": "Stable external phone/chat conversation ID"
+    },
+    "owner_notification_managed": {
+      "type": "boolean",
+      "description": "Owner email is sent by notifyLeadEvent"
+    },
+    "appointment_time": {
+      "type": "string"
+    },
+    "appointment_status": {
+      "type": "string"
     }
   },
   "required": [

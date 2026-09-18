@@ -21,6 +21,8 @@ Deno.serve(async (req) => {
     const lead = payload.data;
     if (!lead?.id) return Response.json({ error: "Lead ID required" }, { status: 400 });
 
+    // This intake uses the durable phone/chat notification path instead.
+    if(lead.owner_notification_managed) return Response.json({success:true,managed_by:"notifyLeadEvent"});
     try {
       const { accessToken } = await base44.asServiceRole.connectors.getConnection("googlesheets");
       const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
