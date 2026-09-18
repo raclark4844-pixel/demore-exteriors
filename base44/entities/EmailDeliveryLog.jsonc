@@ -1,0 +1,27 @@
+{
+  "name": "EmailDeliveryLog",
+  "type": "object",
+  "properties": {
+    "idempotency_key": {
+      "type": "string",
+      "description": "Stable key that prevents duplicate owner emails for the same lead snapshot"
+    },
+    "lead_id": { "type": "string" },
+    "lead_ref": { "type": "string" },
+    "event_type": {
+      "type": "string",
+      "enum": ["lead_captured", "lead_updated", "owner_test", "knowledge_refresh"]
+    },
+    "recipients": { "type": "string" },
+    "subject": { "type": "string" },
+    "provider_status": {
+      "type": "string",
+      "enum": ["accepted", "rejected", "retrying", "blocked_config", "skipped_duplicate"]
+    },
+    "provider_message_id": { "type": "string" },
+    "attempt_count": { "type": "number", "default": 1 },
+    "last_error": { "type": "string" },
+    "fingerprint": { "type": "string" }
+  },
+  "required": ["idempotency_key", "event_type", "provider_status"]
+}
