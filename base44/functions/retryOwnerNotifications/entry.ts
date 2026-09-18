@@ -1,5 +1,5 @@
 import {authorize} from "../../shared/agentNotificationAuth.ts";
-import notify from "../notifyLeadEvent/entry.ts";
+import notify from "../../shared/notifyLeadEvent.ts";
 export default async function(req) {
  if(req.method!=="POST") return Response.json({error:"Method not allowed"},{status:405});
  const access=await authorize(req);if(access.response)return access.response;

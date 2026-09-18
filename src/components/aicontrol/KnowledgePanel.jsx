@@ -32,6 +32,7 @@ export default function KnowledgePanel() {
   const [busy,setBusy]=useState(false);
   const [notice,setNotice]=useState("");
   const {data:refreshes=[],refetch}=useQuery({queryKey:["knowledge-refresh"],queryFn:()=>base44.entities.KnowledgeRefresh.list("-created_date",20)});
+  const {data:deliveries=[]}=useQuery({queryKey:["owner-notification-status"],queryFn:()=>base44.entities.EmailDeliveryLog.list("-created_date",5),refetchInterval:10000});
   const latest=refreshes[0];
   const lastSuccess=refreshes.find(r=>r.status==="success");
   async function run(name) {
@@ -50,7 +51,8 @@ export default function KnowledgePanel() {
       <div className="rounded border p-3 space-y-2">
         <p className="text-sm">Website feature catalog: September 17, 2026. Separate Grok phone/chat synchronization is not yet verified.</p>
         <p className="text-sm">Public page refresh: {latest ? latest.status+" · "+latest.version : "Not run"}. Last complete refresh: {lastSuccess?.last_success_at ? new Date(lastSuccess.last_success_at).toLocaleString() : "Not yet completed"}.</p>
-        {latest?.failed_paths && <p className="text-xs text-muted-foreground">{latest.failed_paths}</p>}
+        {latest?.pages_failed>0 && <p className="text-xs text-muted-foreground">{latest.pages_failed} public pages could not be read. Existing page knowledge was preserved.</p>}
+        {deliveries[0] && <p className="text-sm">Latest owner notification: {deliveries[0].provider_status} · {deliveries[0].subject}</p>}
         <div className="flex gap-2 flex-wrap">
           <Button disabled={busy} variant="outline" onClick={()=>run("refreshPublicKnowledge")}>Refresh public pages</Button>
           <Button disabled={busy} variant="outline" onClick={()=>run("retryOwnerNotifications")}>Retry pending owner emails</Button>

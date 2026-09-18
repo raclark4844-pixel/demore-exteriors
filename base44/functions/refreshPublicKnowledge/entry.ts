@@ -36,6 +36,7 @@ const VERSION = "2026.09.18.1";
 
 function strip(html) {
   return html
+    .replace(/<(nav|header|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<[^>]+>/g, " ")
@@ -68,7 +69,12 @@ export default async function (req) {
     if (BLOCKED.some((b) => path.startsWith(b))) continue;
     const url = `${ORIGIN}${path}`;
     try {
-      const res = await fetch(url, { redirect: "error", signal: AbortSignal.timeout(10000) });
+      let res=await fetch(url,{redirect:"manual",signal:AbortSignal.timeout(10000)});
+      if(res.status>=300 && res.status<400) {
+        const target=new URL(res.headers.get("location")||"",url);
+        if(!["www.demoreexteriorsolutions.com","demoreexteriorsolutions.com"].includes(target.hostname)||target.protocol!=="https:"||target.pathname!==path||target.search) throw new Error("Unexpected public page redirect");
+        res=await fetch(target,{redirect:"manual",signal:AbortSignal.timeout(10000)});
+      }
       if (!res.ok) {
         failed.push(`${path} (${res.status})`);
         continue;

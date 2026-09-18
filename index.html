@@ -34,7 +34,7 @@
     <meta property="og:site_name" content="Demore Exterior Solutions" />
     <meta property="og:title" content="Roofing & Siding Contractor in Mentor, OH | Demore Exterior Solutions" />
     <meta property="og:description" content="Trusted Northeast Ohio roofing and siding contractor based in Mentor, OH. Roof replacement, siding, gutters, windows, decks and storm damage inspections. Get a free estimate." />
-    <meta property="og:url" content="https://www.demoreexteriorsolutions.com/" />
+    <meta property="og:url" content="https://demoreexteriorsolutions.com/" />
     <meta property="og:image" content="https://media.base44.com/images/public/user_6a22dc88783b484dd6ef2b08/899ea39b7_Demorelogo.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -60,7 +60,20 @@
     </script>
 
     <!-- Demore Virtual Receptionist (Ask Demore chat + Call overlay) -->
-    <script defer src="https://demorephoneagent.grok.me/embed.js"></script>
+    <script>
+      // The external widget forwards location.search; never load it in staff or authenticated previews.
+      (() => {
+        const url = new URL(window.location.href);
+        const staff = /^\/(ops|ai-control|market-research|products|login|register)(\/|$)/.test(url.pathname);
+        const preview = url.hostname.startsWith("preview") || ["access_token", "_preview_token", "token"].some(key => url.searchParams.has(key));
+        if (staff || preview) return;
+        const script = document.createElement("script");
+        script.id = "ask-demore-embed";
+        script.src = "https://demorephoneagent.grok.me/embed.js";
+        script.defer = true;
+        document.head.appendChild(script);
+      })();
+    </script>
 
     <!-- JSON-LD: single consolidated business entity (RoofingContractor) -->
     <script type="application/ld+json">
@@ -150,13 +163,6 @@
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Entry Door Installation", "description": "ProVia, Therma-Tru, and Larson entry and storm door installation." } },
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Deck Construction & Outdoor Living", "description": "Custom wood and composite decks, deck replacements, resurfacing, structural repairs, railings, stairs, elevated decks, and three-season room foundations built to Ohio Residential Code (R507)." } }
             ]
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5.0",
-            "reviewCount": "47",
-            "bestRating": "5",
-            "worstRating": "1"
           },
           "sameAs": [
             "https://www.facebook.com/share/14cDuZ4TLPU/?mibextid=wwXIfr"

@@ -19,3 +19,6 @@ Grok Build is still blocked by its free-tier limit and the interrupted preview r
 
 ## Validation
 Mock checks: syntax, both recipients, long intake hashing, capture/update dedupe, changed active leak, provider rejection, missing configuration persistence, recovered-call exclusion and empty intake. Production build passed. Live owner delivery test and public refresh results must be recorded separately.
+
+## Verified live results
+The one labeled owner test was delivered to both owners; provider ID 01a0b26c-3a9d-71c6-8e9a-a48da987c8ac, delivery record 6aaca6f8b22afd1631cbc06b. All four new/updated protected endpoints return 401 without authentication after deployment. A fresh public refresh correctly reports 27 unreadable navigation-only pages, preserving the curated catalog. Accidental navigation metadata records from validation were retired, and their refresh status corrected to failed. The external widget is excluded from staff, preview and token-bearing URLs because it forwards the parent URL; public embedding remains unchanged.
