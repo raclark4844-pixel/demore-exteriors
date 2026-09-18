@@ -1,4 +1,4 @@
-import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
+import { authorize } from "../../shared/agentNotificationAuth.ts";
 import { Resend } from "npm:resend@6.28.1";
 
 const TO = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
@@ -6,20 +6,11 @@ const TO = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.c
 export default async function (req) {
   if (req.method !== "POST") return Response.json({ error: "Method not allowed" }, { status: 405 });
 
-  const expectedSecret = Deno.env.get("AI_PHONE_WEBHOOK_SECRET");
-  const provided = req.headers.get("x-demore-agent-secret") || "";
-  if (!expectedSecret || provided !== expectedSecret) {
-    return Response.json({
-      error: "Unauthorized or secret missing",
-      missing: expectedSecret ? [] : [{
-        name: "AI_PHONE_WEBHOOK_SECRET",
-        where: "Base44 Dashboard → Secrets",
-        why: "Required to run the labeled owner notification test",
-      }],
-      sent: false,
-    }, { status: expectedSecret ? 401 : 503 });
-  }
-
+  const access=await authorize(req); if(access.response) return access.response;
+  const sr=access.sr;
+  const key="demore-owner-notification-test-2026-09-18-reviewed-v1";
+  const prior=await sr.entities.EmailDeliveryLog.filter({idempotency_key:key});
+  if(prior.some(r=>["accepted","delivered"].includes(r.provider_status))) return Response.json({success:true,duplicate:true,sent:false,provider_message_id:prior[0].provider_message_id});
   if (!Deno.env.get("RESEND_API_KEY")) {
     return Response.json({
       error: "Email configuration is missing",
@@ -41,31 +32,30 @@ export default async function (req) {
     subject,
     html: `
       <p><strong>TEST NOTIFICATION — not a customer lead.</strong></p>
-      <p>This confirms owner email routing for phone and Ask Demore captures.</p>
+      <p>This tests the Base44 owner email service. The external phone/chat handoff requires a separate end-to-end test.</p>
       <p>Recipients: ryan@demoreexteriorsolutions.com and clark@demoreexteriorsolutions.com</p>
       <p>Do not create an appointment from this message. Do not contact a homeowner.</p>
     `,
-  }, { idempotencyKey: `owner-notification-test-${new Date().toISOString().slice(0, 13)}` });
+  }, { idempotencyKey: key });
 
-  if (result.error) {
+  if (result.error || !result.data?.id) {
     return Response.json({
       success: false,
       sent: false,
       provider_status: "rejected",
-      error: result.error.message || "Provider rejected the message",
+      error: result.error?.message || "Provider rejected the message",
     }, { status: 502 });
   }
 
-  const base44 = createClientFromRequest(req);
-  await base44.asServiceRole.entities.EmailDeliveryLog.create({
-    idempotency_key: `owner-test-${result.data?.id || Date.now()}`,
+  await sr.entities.EmailDeliveryLog.create({
+    idempotency_key: key,
     event_type: "owner_test",
     recipients: TO.join(", "),
     subject,
     provider_status: "accepted",
     provider_message_id: result.data?.id || "",
     attempt_count: 1,
-  }).catch(() => null);
+  });
 
   return Response.json({
     success: true,

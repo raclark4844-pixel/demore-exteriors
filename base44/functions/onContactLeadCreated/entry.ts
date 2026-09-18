@@ -6,10 +6,10 @@ const SHEET_NAME = "Leads";
 const DEFAULT_RECIPIENTS = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
 
 const esc = (value) => String(value ?? "")
-  .replaceAll("&", "&")
-  .replaceAll("<", "<")
-  .replaceAll(">", ">")
-  .replaceAll('"', """)
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
   .replaceAll("'", "&#039;");
 
 const show = (value, fallback = "Not provided") => value ? esc(value) : fallback;
@@ -21,18 +21,8 @@ Deno.serve(async (req) => {
     const lead = payload.data;
     if (!lead?.id) return Response.json({ error: "Lead ID required" }, { status: 400 });
 
-    if (!Deno.env.get("RESEND_API_KEY")) {
-      return Response.json({
-        error: "Email configuration is missing",
-        sent: false,
-        missing: [{
-          name: "RESEND_API_KEY",
-          where: "Base44 Dashboard → Secrets",
-          why: "Server-side Resend credential for owner notifications",
-        }],
-      }, { status: 503 });
-    }
-
+    // This intake uses the durable phone/chat notification path instead.
+    if(lead.owner_notification_managed) return Response.json({success:true,managed_by:"notifyLeadEvent"});
     try {
       const { accessToken } = await base44.asServiceRole.connectors.getConnection("googlesheets");
       const timestamp = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
@@ -53,7 +43,7 @@ Deno.serve(async (req) => {
         lead.adjuster_email || "",
         lead.lead_source || "website",
         lead.preferred_language || "en",
-        lead.message || lead.call_summary || "",
+        lead.message || "",
         lead.status || "new",
         lead.id
       ];
@@ -86,7 +76,7 @@ Deno.serve(async (req) => {
       html: `
         <h2>New Demore Lead</h2>
         <p>Lead reference: <strong>${esc(lead.id)}</strong></p>
-        <p>A new lead was captured from <strong>${esc(sourceLabel)}</strong>. This email is sent when information is captured, not only when an appointment is booked.</p>
+        <p>A new lead was captured from <strong>${esc(sourceLabel)}</strong>.</p>
         <table style="border-collapse:collapse;width:100%;max-width:760px">
           <tr><td style="padding:6px;font-weight:bold">Name</td><td style="padding:6px">${show(lead.name)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Phone</td><td style="padding:6px">${show(lead.phone)}</td></tr>
@@ -101,19 +91,13 @@ Deno.serve(async (req) => {
           <tr><td style="padding:6px;font-weight:bold">Adjuster</td><td style="padding:6px">${show(lead.adjuster_name)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Adjuster phone</td><td style="padding:6px">${show(lead.adjuster_phone)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Adjuster email</td><td style="padding:6px">${show(lead.adjuster_email)}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Appointment time</td><td style="padding:6px">${show(lead.appointment_time)}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Appointment status</td><td style="padding:6px">${show(lead.appointment_status, "Not confirmed by calendar")}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Call summary</td><td style="padding:6px">${show(lead.call_summary).replaceAll("\n", "<br/>")}</td></tr>
-          <tr><td style="padding:6px;font-weight:bold">Transcript</td><td style="padding:6px">${show(lead.transcript_url)}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Language</td><td style="padding:6px">${show(lead.preferred_language, "en")}</td></tr>
           <tr><td style="padding:6px;font-weight:bold">Message</td><td style="padding:6px">${show(lead.message, "None").replaceAll("\n", "<br/>")}</td></tr>
         </table>
         <p><a href="https://www.demoreexteriorsolutions.com">Demore Exterior Solutions</a></p>
       `
     }, { idempotencyKey: `lead-owner-${lead.id}` });
-    if (ownerEmail.error) {
-      return Response.json({ error: "Owner email was rejected by provider", sent: false }, { status: 502 });
-    }
+    if (ownerEmail.error) throw new Error("Owner email was rejected by provider");
     if (ownerEmail.data?.id) await base44.asServiceRole.entities.ContactLead.update(lead.id, { owner_notification_id: ownerEmail.data.id });
 
     if (lead.email) {
@@ -135,9 +119,9 @@ Deno.serve(async (req) => {
       if (customerEmail.error) throw new Error("Customer email was rejected by provider");
     }
 
-    return Response.json({ success: true, sent: true, notified: recipients, provider_message_id: ownerEmail.data?.id || null });
+    return Response.json({ success: true, notified: recipients });
   } catch (error) {
     console.error("Lead notification failed:", error.message);
-    return Response.json({ error: error.message, sent: false }, { status: 500 });
+    return Response.json({ error: error.message }, { status: 500 });
   }
 });

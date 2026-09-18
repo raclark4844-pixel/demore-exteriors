@@ -1,34 +1,21 @@
-# Phone / chat owner email and knowledge refresh
+# Phone/chat notification integration
 
-Branch: `improvement/phone-agent-email-knowledge`
-Knowledge version target: `2026.09.18.1`
+Reviewed replacement for the initial PR implementation. Production is Base44, not the Vercel preview.
 
-## What this adds
-- `notifyLeadEvent` — emails both owners when phone or Ask Demore captures or updates intake, not only when an appointment is booked.
-- Duplicate prevention by intake fingerprint. Retries up to 3 times. `sent: true` only after Resend accepts the message.
-- `refreshPublicKnowledge` — reads public www.demoreexteriorsolutions.com pages only. Excludes /ops, /install, /login and other staff routes.
-- `sendOwnerNotificationTest` — one labeled test to both owners. Not a customer lead.
-- LD-6B9F5797 is blocked from automatic recovery resend.
+## Base44 behavior
+- Both ingestAiPhoneLead and notifyLeadEvent use the same authenticated handler.
+- Authenticate external calls with x-demore-agent-secret from AI_PHONE_WEBHOOK_SECRET. Signed-in Base44 admins can run staff tests and refresh actions without revealing that secret.
+- Send accumulated intake in lead, with stable lead_ref (Grok lead ID or Vapi call ID), lead_source chat/ai_phone, and available contact, address, message, claim, appointment and transcript-reference fields.
+- Partial intakes persist in staff-only EmailDeliveryLog; qualified name/phone intakes also reach ContactLead. No appointments are created by these endpoints.
+- Both owners receive notifications. SHA-256 event keys prevent duplicate emails across capture/update retries. Active-leak changes are included.
+- Provider acceptance requires a message ID. Failed/configuration-blocked intake is retained. Transient sends retry with backoff up to three attempts per request; staff can retry pending records from Knowledge. There is no background retry scheduler yet. Ambiguous sends older than 23 hours need staff review, avoiding resends outside provider idempotency retention.
+- Recovery lead LD-6B9F5797 is always excluded. Do not resend the previous manually recovered email.
 
-## Live checks already performed
-- `POST https://demoreexteriorsolutions.com/functions/ingestAiPhoneLead` without secret returns **401 Unauthorized**. Function is published and `AI_PHONE_WEBHOOK_SECRET` is set.
-- GET on the same function returns **405 Method not allowed**.
-- `https://demorephoneagent.grok.me` Command Center already shows lead **LD-6B9F5797** (Ryan Clark, Mentor, booked inspection Fri Sep 18 2:00–4:00 PM). Do not resend that recovery email or create another appointment.
-- ryan@ already received other Base44 owner emails (satellite estimate and a later TEST CALL ai-phone lead). The Brain app lead LD-6B9F5797 did not automatically email because that app stores leads locally and did not call `ingestAiPhoneLead` / `notifyLeadEvent` for that record.
+## Knowledge
+Existing feature context remains in websiteFeatures.ts and is used by Base44 assistants/orchestration. Public refresh checks correct help routes plus 15 cities, only accepts main/article content, and preserves previous knowledge when the website responds with a navigation-only shell. A partial/failed refresh does not claim a last successful refresh.
 
-## Preserve
-- Verizon no-answer forwarding to the Vapi number
-- Existing Vapi number and embed (`https://demorephoneagent.grok.me/embed.js`)
-- Saved leads in Command Center
+## External app
+Grok Build is still blocked by its free-tier limit and the interrupted preview returns HTTPError 500. Actual Grok/Vapi integration and knowledge synchronization are NOT verified. Do not publish the broken Grok preview. Preserve the current working number, forwarding and embed.
 
-## Owner must still do after merge + Base44 function deploy
-1. Confirm Secrets exist: `RESEND_API_KEY`, `AI_PHONE_WEBHOOK_SECRET`. Optional `RESEND_FROM_EMAIL` and `LEAD_NOTIFICATION_EMAILS`.
-2. Point Vapi post-call webhook **and** Ask Demore capture/update events at:
-   - `https://demoreexteriorsolutions.com/functions/ingestAiPhoneLead` (new leads)
-   - `https://demoreexteriorsolutions.com/functions/notifyLeadEvent` (updates)
-   Header: `x-demore-agent-secret`
-3. Run `POST /functions/sendOwnerNotificationTest` with the same header. That is the labeled owner test.
-4. Run `POST /functions/refreshPublicKnowledge` with the same header.
-5. Publish Base44 only after those two calls return `provider_status: accepted` and a knowledge version.
-
-Do not print secret values.
+## Validation
+Mock checks: syntax, both recipients, long intake hashing, capture/update dedupe, changed active leak, provider rejection, missing configuration persistence, recovered-call exclusion and empty intake. Production build passed. Live owner delivery test and public refresh results must be recorded separately.

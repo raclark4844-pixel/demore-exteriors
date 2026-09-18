@@ -1,4 +1,4 @@
-import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
+import { authorize } from "../../shared/agentNotificationAuth.ts";
 
 const ORIGIN = "https://www.demoreexteriorsolutions.com";
 const PATHS = [
@@ -7,13 +7,28 @@ const PATHS = [
   "/storm-damage",
   "/storm-updates",
   "/insurance-claims/help",
-  "/insurance-claims/help/what-is-an-insurance-supplement",
-  "/insurance-claims/help/ohio-matching-siding-roofing-exterior-materials",
+  "/insurance-claims/help/supplements",
+  "/insurance-claims/help/ohio-matching",
   "/insurance-claims/help/acv-vs-rcv",
-  "/insurance-claims/help/depreciation-depreciation-release",
-  "/insurance-claims/help/how-to-file-an-ohio-department-of-insurance-complaint",
+  "/insurance-claims/help/depreciation",
+  "/insurance-claims/help/odi-complaint",
   "/review-us",
   "/gallery",
+  "/service-area/lake/mentor",
+  "/service-area/lake/willoughby",
+  "/service-area/lake/painesville",
+  "/service-area/lake/concord-township",
+  "/service-area/lake/eastlake",
+  "/service-area/lake/wickliffe",
+  "/service-area/lake/kirtland",
+  "/service-area/geauga/chardon",
+  "/service-area/cuyahoga/solon",
+  "/service-area/cuyahoga/strongsville",
+  "/service-area/cuyahoga/mayfield-heights",
+  "/service-area/cuyahoga/cleveland",
+  "/service-area/cuyahoga/lakewood",
+  "/service-area/cuyahoga/parma",
+  "/service-area/summit/hudson",
 ];
 
 const BLOCKED = ["/ops", "/install", "/login", "/register", "/ai-control", "/market-research"];
@@ -40,18 +55,12 @@ function categoryFor(path) {
 }
 
 export default async function (req) {
-  if (req.method !== "POST" && req.method !== "GET") {
+  if (req.method !== "POST") {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
-  const expectedSecret = Deno.env.get("AI_PHONE_WEBHOOK_SECRET");
-  const provided = req.headers.get("x-demore-agent-secret") || "";
-  if (!expectedSecret || provided !== expectedSecret) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const base44 = createClientFromRequest(req);
-  const sr = base44.asServiceRole;
+  const access=await authorize(req); if(access.response) return access.response;
+  const sr=access.sr;
   const ok = [];
   const failed = [];
 
@@ -59,13 +68,17 @@ export default async function (req) {
     if (BLOCKED.some((b) => path.startsWith(b))) continue;
     const url = `${ORIGIN}${path}`;
     try {
-      const res = await fetch(url, { redirect: "follow" });
+      const res = await fetch(url, { redirect: "error", signal: AbortSignal.timeout(10000) });
       if (!res.ok) {
         failed.push(`${path} (${res.status})`);
         continue;
       }
       const html = await res.text();
-      const text = strip(html);
+      // Base44 can return a navigation-only SPA shell with HTTP 200.
+      // Only ingest main/article copy; never replace useful knowledge with that shell.
+      const content=html.match(/<(?:main|article)\b[^>]*>([\s\S]*?)<\/(?:main|article)>/i)?.[1]||"";
+      const text = strip(content);
+      if(text.length<200) {failed.push(path+" (rendered page content unavailable; previous knowledge retained)");continue;}
       const subject = `Public page ${path}`;
       const existing = await sr.entities.SharedKnowledge.filter({ subject }).catch(() => []);
       const record = {
@@ -140,11 +153,12 @@ export default async function (req) {
     pages_failed: failed.length,
     failed_paths: failed.join(", "),
     summary: `Refreshed ${ok.length} public pages. Failed: ${failed.length}. Staff and customer-record paths excluded.`,
-    last_success_at: status === "failed" ? undefined : new Date().toISOString(),
+    last_success_at: status === "success" ? new Date().toISOString() : undefined,
   });
 
   return Response.json({
-    success: status !== "failed",
+    success: status === "success",
+    status,
     version: VERSION,
     last_success_at: refresh.last_success_at || null,
     pages_ok: ok,

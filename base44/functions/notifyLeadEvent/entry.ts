@@ -1,4 +1,5 @@
-import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
+import {buildPhoneLeadPayload,toContactLeadRecord} from "../ingestAiPhoneLead/phoneAgent.ts";
+import { authorize } from "../../shared/agentNotificationAuth.ts";
 import { Resend } from "npm:resend@6.28.1";
 
 const DEFAULT_RECIPIENTS = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
@@ -60,26 +61,27 @@ function row(label, value) {
 export default async function (req) {
   if (req.method !== "POST") return Response.json({ error: "Method not allowed" }, { status: 405 });
 
-  const expectedSecret = Deno.env.get("AI_PHONE_WEBHOOK_SECRET");
-  if (!expectedSecret) {
-    return Response.json({
-      error: "AI phone webhook is not configured",
-      missing: [{
-        name: "AI_PHONE_WEBHOOK_SECRET",
-        where: "Base44 Dashboard → Secrets",
-        why: "Authenticates Vapi / Ask Demore / notifyLeadEvent posts via x-demore-agent-secret",
-      }],
-    }, { status: 503 });
-  }
-  const provided = req.headers.get("x-demore-agent-secret") || "";
-  if (provided !== expectedSecret) return Response.json({ error: "Unauthorized" }, { status: 401 });
-
+  const access=await authorize(req); if(access.response) return access.response;
+  const sr=access.sr;
   const body = await req.json().catch(() => ({}));
-  const lead = (body && (body.lead || body.intake)) || body || {};
+  const raw = (body && (body.lead || body.intake)) || body || {};
+  if(!raw || typeof raw!=="object" || Array.isArray(raw)) return Response.json({error:"Intake object required"},{status:400});
+  const lead = {};
+  for(const key of ["lead_ref","external_id","id","name","phone","email","address","message","inquiry","appointment_time","appointment_status","service_type","insurance_claim_filed","claim_carrier","claim_number","date_of_loss","adjuster_name","adjuster_phone","adjuster_email","call_summary","transcript_url","lead_source"]) {
+    if(raw[key]!=null) lead[key]=String(raw[key]).trim().slice(0,key==="call_summary"||key==="message"?12000:1000);
+  }
+  if(raw.active_leak!==undefined) lead.active_leak=raw.active_leak===true || raw.active_leak==="true" || raw.active_leak==="yes";
+  lead.name ||= String(raw.caller_name||"").slice(0,180);
+  lead.phone ||= String(raw.callback_phone||raw.caller_phone||"").slice(0,80);
+  lead.address ||= String(raw.property_address||"").slice(0,500);
+  lead.claim_carrier ||= String(raw.insurance_carrier||"").slice(0,180);
+  lead.call_summary ||= String(raw.summary||"").slice(0,12000);
+  lead.transcript_url ||= String(raw.transcript_reference||"").slice(0,1000);
+  if(!["name","phone","email","address","message","inquiry","call_summary"].some(k=>lead[k])) return Response.json({error:"No captured information"},{status:400});
   const eventType = body.event_type === "lead_updated" ? "lead_updated" : "lead_captured";
-  const leadRef = String(lead.lead_ref || lead.external_id || lead.id || "");
+  const leadRef = String(lead.lead_ref || lead.external_id || lead.id || (lead.phone ? "legacy-phone:"+lead.phone : ""));
 
-  if (SKIP_RECOVERY_REFS.has(leadRef) && body.allow_ld6_recovery !== true) {
+  if (SKIP_RECOVERY_REFS.has(leadRef)) {
     return Response.json({
       success: true,
       skipped: true,
@@ -87,24 +89,19 @@ export default async function (req) {
     });
   }
 
-  const cfg = missingEmailConfig();
-  if (cfg.length) {
-    return Response.json({ error: "Email configuration is missing", missing: cfg, sent: false }, { status: 503 });
-  }
+  if(!leadRef) return Response.json({error:"Stable lead_ref or call ID required"},{status:400});
+  lead.lead_ref=leadRef;
+  const snap = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(JSON.stringify(lead))))).map(b=>b.toString(16).padStart(2,"0")).join("");
+  const idempotencyKey = "demore-intake-"+snap;
 
-  const base44 = createClientFromRequest(req);
-  const sr = base44.asServiceRole;
-  const snap = fingerprint(lead);
-  const idempotencyKey = `${eventType}:${leadRef || lead.phone || "unknown"}:${snap}`;
-
-  const existing = await sr.entities.EmailDeliveryLog.filter({ idempotency_key: idempotencyKey }).catch(() => []);
-  if (Array.isArray(existing) && existing.some((row) => row.provider_status === "accepted")) {
+  const existing = await sr.entities.EmailDeliveryLog.filter({ idempotency_key: idempotencyKey });
+  if (Array.isArray(existing) && existing.some((row) => ["accepted","delivered"].includes(row.provider_status))) {
     return Response.json({ success: true, duplicate: true, sent: false, idempotency_key: idempotencyKey });
   }
 
   const to = recipients();
-  const source = (lead.lead_source || body.source || "ai_phone").replaceAll("_", " ");
-  const subjectPrefix = eventType === "lead_updated" ? "Updated intake" : "New intake";
+  const source = String(lead.lead_source || body.source || "ai_phone").replaceAll("_", " ");
+  const subjectPrefix = "Captured intake";
   const subject = `${subjectPrefix} — ${lead.name || "Unknown caller"} (${source})`;
   const from = Deno.env.get("RESEND_FROM_EMAIL") || "Demore Exterior Solutions <no-reply@demorehomesolutions.com>";
 
@@ -135,57 +132,41 @@ export default async function (req) {
     </table>
   `;
 
-  const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-  let lastError = "";
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    const result = await resend.emails.send({
-      from,
-      to,
-      replyTo: lead.email || "ryan@demoreexteriorsolutions.com",
-      subject,
-      html,
-    }, { idempotencyKey });
-    if (result.error) {
-      lastError = result.error.message || String(result.error);
-      await sr.entities.EmailDeliveryLog.create({
-        idempotency_key: `${idempotencyKey}:attempt-${attempt}`,
-        lead_id: lead.id || "",
-        lead_ref: leadRef,
-        event_type: eventType,
-        recipients: to.join(", "),
-        subject,
-        provider_status: attempt === MAX_ATTEMPTS ? "rejected" : "retrying",
-        attempt_count: attempt,
-        last_error: lastError,
-        fingerprint: snap,
-      }).catch(() => null);
-      continue;
-    }
-    await sr.entities.EmailDeliveryLog.create({
-      idempotency_key: idempotencyKey,
-      lead_id: lead.id || "",
-      lead_ref: leadRef,
-      event_type: eventType,
-      recipients: to.join(", "),
-      subject,
-      provider_status: "accepted",
-      provider_message_id: result.data?.id || "",
-      attempt_count: attempt,
-      fingerprint: snap,
-    }).catch(() => null);
-    return Response.json({
-      success: true,
-      sent: true,
-      provider_status: "accepted",
-      provider_message_id: result.data?.id || null,
-      recipients: to,
-    });
+  const record=existing[0] || await sr.entities.EmailDeliveryLog.create({
+    idempotency_key:idempotencyKey,lead_ref:leadRef,event_type:eventType,recipients:to.join(", "),
+    subject,provider_status:"pending",attempt_count:0,fingerprint:snap,intake:lead,
+  });
+  // Store qualified intakes in the existing lead inbox; partial intakes remain in the delivery log.
+  if(lead.name && lead.phone) {
+    const matches=await sr.entities.ContactLead.filter({external_intake_ref:leadRef});
+    const data=toContactLeadRecord(buildPhoneLeadPayload(lead));
+    data.external_intake_ref=leadRef;
+    data.owner_notification_managed=true;
+    data.lead_source=lead.lead_source==="chat"||body.source==="chat"?"chat":"ai_phone";
+    data.appointment_time=lead.appointment_time||"";
+    data.appointment_status=lead.appointment_status||"Not confirmed";
+    if(matches[0]) {delete data.status;await sr.entities.ContactLead.update(matches[0].id,data);}
+    else await sr.entities.ContactLead.create(data);
   }
-
-  return Response.json({
-    success: false,
-    sent: false,
-    provider_status: "rejected",
-    error: "Provider rejected the message",
-  }, { status: 502 });
+  const cfg=missingEmailConfig();
+  if(cfg.length) {await sr.entities.EmailDeliveryLog.update(record.id,{provider_status:"blocked_config"});return Response.json({error:"Email configuration missing",missing:cfg,sent:false,delivery_log_id:record.id},{status:503});}
+  const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+  for(let attempt=1;attempt<=MAX_ATTEMPTS;attempt++) {
+    let result;
+    try {result=await resend.emails.send({from,to,replyTo:lead.email||DEFAULT_RECIPIENTS[0],subject,html},{idempotencyKey});}
+    catch {result={error:{message:"Email provider connection failed",statusCode:503}};}
+    if(result.data?.id && !result.error) {
+      await sr.entities.EmailDeliveryLog.update(record.id,{provider_status:"accepted",provider_message_id:result.data.id,attempt_count:(record.attempt_count||0)+attempt,last_error:""});
+      return Response.json({success:true,sent:true,provider_status:"accepted",provider_message_id:result.data.id,recipients:to,delivery_log_id:record.id});
+    }
+    const code=Number(result.error?.statusCode||503);
+    const retryable=code===429 || code>=500;
+    await sr.entities.EmailDeliveryLog.update(record.id,{
+      provider_status:retryable?"retrying":"rejected",attempt_count:(record.attempt_count||0)+attempt,
+      last_error:result.error?.message||"Provider returned no message ID",
+    });
+    if(!retryable) break;
+    if(attempt<MAX_ATTEMPTS) await new Promise(r=>setTimeout(r,1000*2**(attempt-1)));
+  }
+  return Response.json({success:false,sent:false,provider_status:"failed",delivery_log_id:record.id,error:"Owner notification not accepted; intake retained for retry"},{status:502});
 }
