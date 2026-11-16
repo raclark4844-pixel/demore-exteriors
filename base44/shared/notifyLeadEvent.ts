@@ -5,6 +5,7 @@ import { Resend } from "npm:resend@6.28.1";
 const DEFAULT_RECIPIENTS = ["ryan@demoreexteriorsolutions.com", "clark@demoreexteriorsolutions.com"];
 const SKIP_RECOVERY_REFS = new Set(["LD-6B9F5797"]);
 const MAX_ATTEMPTS = 3;
+const NOTIFICATION_VERSION = "v2-approval-button";
 
 const esc = (value) => String(value ?? "")
   .replaceAll("&", "&")
@@ -106,7 +107,7 @@ export default async function (req) {
   if(!leadRef) return Response.json({error:"Stable lead_ref or call ID required"},{status:400});
   lead.lead_ref=leadRef;
   const snap = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(JSON.stringify(lead))))).map(b=>b.toString(16).padStart(2,"0")).join("");
-  const idempotencyKey = "demore-intake-"+snap;
+  const idempotencyKey = "demore-intake-" + NOTIFICATION_VERSION + "-" + snap;
 
   const existing = await sr.entities.EmailDeliveryLog.filter({ idempotency_key: idempotencyKey });
   if (Array.isArray(existing) && existing.some((row) => ["accepted","delivered"].includes(row.provider_status))) {
